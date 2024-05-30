@@ -113,7 +113,7 @@ $atribut = query("SELECT * FROM atribut");
                                                         <?php foreach ($atribut as $row) : ?>
                                                             <th><?= $row["nama_atribut"]; ?></th>
                                                         <?php endforeach; ?>
-                                                        <th>Action</th>
+                                                        <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -133,22 +133,27 @@ $atribut = query("SELECT * FROM atribut");
                                                                         echo " ";
                                                                     }
                                                                     ?>
-                                                                    <!-- <input type="text" id="<?= $rows["id_kelurahan"] . "_" . $row["id_atribut"] ?>"> -->
                                                                 </td>
                                                             <?php endforeach; ?>
-                                                            <!-- <td><a href="editnilai.php?id_kelurahan=<?= $rows["id_kelurahan"]; ?>"><button onclick="edit(<?= $rows['id_kelurahan'] ?>)">Edit</button></a></td> -->
-                                                            <td><a class="btn btn-sm btn-warning" href="editnilai.php?id_kelurahan=<?= $rows["id_kelurahan"]; ?>" onclick="edit(<?= $rows['id_kelurahan'] ?>) role=" button"><i class="fas fa-edit"></i></a>
-                                                                <?php
-                                                                // Pastikan $nilaikelurahan dan $rows terdefinisi dan memiliki nilai sebelum digunakan
-                                                                if (isset($nilaikelurahan[0]['nilai']) && isset($rows["id_kelurahan"])) {
-                                                                    if ($nilaikelurahan[0]['nilai'] !== null && $nilaikelurahan[0]['nilai'] !== "") {
-                                                                        // echo '| <a class="btn btn-sm btn-danger id="sa-warning"" href="deletenilai.php?id_kelurahan=' . $rows["id_kelurahan"] . '" onclick="return confirm(\'Hapus Nilai?\');" role="button"><i class="fas fa-trash"></i</a>';
-                                                                        echo '| <a class="btn btn-sm btn-danger tombol-hapus" href="deletenilai.php?id_kelurahan=' . $rows["id_kelurahan"] . '" role="button"><i class="fas fa-trash"></i</a>';
-                                                                    } else {
-                                                                        echo "";
-                                                                    }
-                                                                }
-                                                                ?>
+                                                            <td>
+                                                                <div class="dropdown">
+                                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                        Action
+                                                                    </button>
+                                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                        <li><a class="dropdown-item" href="editnilai.php?id_kelurahan=<?= $rows["id_kelurahan"]; ?>" onclick="edit(<?= $rows['id_kelurahan'] ?>)">Edit</a></li>
+                                                                        <?php
+                                                                        // Pastikan $nilaikelurahan dan $rows terdefinisi dan memiliki nilai sebelum digunakan
+                                                                        if (isset($nilaikelurahan[0]['nilai']) && isset($rows["id_kelurahan"])) {
+                                                                            if ($nilaikelurahan[0]['nilai'] !== null && $nilaikelurahan[0]['nilai'] !== "") {
+                                                                                echo '<li><a class="dropdown-item tombol-hapus" href="deletenilai.php?id_kelurahan=' . $rows["id_kelurahan"] . '">Delete</a></li>';
+                                                                            } else {
+                                                                                echo "";
+                                                                            }
+                                                                        }
+                                                                        ?>
+                                                                    </ul>
+                                                                </div>
                                                             </td>
                                                         </tr>
                                                     <?php endforeach; ?>

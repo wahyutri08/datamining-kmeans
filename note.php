@@ -176,3 +176,97 @@
         </div>
     </div>
 <?php endforeach; ?>
+
+
+<?php
+session_start();
+include_once("../auth_check.php");
+if (!isset($_SESSION["login"])) {
+    header("Location:../login");
+    exit;
+}
+
+// Ambil data kelurahan dan atribut
+$kelurahan = query("SELECT * FROM kelurahan ORDER BY id_kelurahan");
+$atribut = query("SELECT * FROM atribut ORDER BY id_atribut");
+$cluster = query("SELECT * FROM cluster ORDER BY id_cluster");
+
+if (!$kelurahan || !$atribut || !$cluster) {
+    die("Error fetching data from database.");
+}
+
+// Ambil nilai kelurahan untuk setiap atribut
+$data = [];
+foreach ($kelurahan as $kel) {
+    $row = [];
+    foreach ($atribut as $attr) {
+        $nilai = query("SELECT nilai FROM nilai_kelurahan WHERE id_kelurahan = " . $kel['id_kelurahan'] . " AND id_atribut = " . $attr['id_atribut']);
+        if ($nilai) {
+            $row[] = $nilai[0]['nilai'];
+        } else {
+            $row[] = 0; // Handle missing values appropriately
+        }
+    }
+    $data[] = $row;
+}
+
+// Ambil nilai Cluster untuk setiap atribut dan iterasi
+$initialCentroids = [];
+foreach ($cluster as $cls) {
+    $row = [];
+    foreach ($atribut as $attr) {
+        $nilai = query("SELECT nilai FROM nilai_cluster WHERE id_cluster = " . $cls['id_cluster'] . " AND id_atribut = " . $attr['id_atribut']);
+        if ($nilai) {
+            $row[] = $nilai[0]['nilai'];
+        } else {
+            $row[] = 0; // Handle missing values appropriately
+        }
+    }
+    $initialCentroids[] = $row;
+}
+
+// Default nilai K dan iterasi
+$defaultIterations = 1000;
+$maxIterations = isset($_POST['iterasi']) ? intval($_POST['iterasi']) : $defaultIterations;
+
+// Dapatkan hasil clustering awal sebelum iterasi pertama
+$initialResult = getInitialClusters($data, $initialCentroids);
+
+// Jalankan algoritma K-Means
+$result = kmeans($data, $initialCentroids, $maxIterations);
+$centroids = $result['centroids'];
+$clusters = $result['clusters'];
+$history = $result['history'];
+
+// Simpan hasil ke database
+if (isset($_POST['save_report'])) {
+    $userId = $_SESSION['id']; // Asumsikan user ID disimpan di session
+    $reportDate = date('Y-m-d H:i:s');
+
+    // Simpan metadata laporan
+    $insertReport = "INSERT INTO laporan (user_id, tanggal_laporan) VALUES ($userId, '$reportDate')";
+    if (mysqli_query($db, $insertReport)) {
+        $reportId = mysqli_insert_id($db);
+
+        // Simpan hasil clustering akhir
+        foreach ($clusters as $clusterId => $clusterData) {
+            foreach ($clusterData as $dataIndex) {
+                $kelurahanName = $kelurahan[$dataIndex]['nama_kelurahan'];
+                foreach ($data[$dataIndex] as $attrIndex => $value) {
+                    $attrName = $atribut[$attrIndex]['nama_atribut'];
+                    $query = "INSERT INTO report_history (report_id, nama_kelurahan, nama_atribut, cluster, nilai) VALUES ($reportId, '$kelurahanName', '$attrName', " . ($clusterId + 1) . ", $value)";
+                    mysqli_query($db, $query);
+                }
+            }
+        }
+        echo "
+        <script>
+        alert('Perhitungan Berhasil Ditambahkan');
+        document.location.href = '../laporan'
+        </script>";
+    } else {
+        echo "Gagal menyimpan laporan: " . mysqli_error($db);
+    }
+}
+
+?>

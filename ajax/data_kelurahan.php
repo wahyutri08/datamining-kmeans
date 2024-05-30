@@ -107,7 +107,7 @@ $pagination .= '</ul>';
             <tr>
                 <th>ID Kelurahan</th>
                 <th>Nama Kelurahan</th>
-                <th>Action</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -116,8 +116,15 @@ $pagination .= '</ul>';
                     <td><?= $row["id_kelurahan"]; ?></td>
                     <td><?= $row["nama_kelurahan"]; ?></td>
                     <td>
-                        <a class="btn btn-sm btn-warning" href="edit_kelurahan.php?id_kelurahan=<?= $row["id_kelurahan"]; ?>" role="button"><i class="fas fa-edit"></i></a> |
-                        <a class="btn btn-sm btn-primary" href="delete_kelurahan.php?id_kelurahan=<?= $row["id_kelurahan"]; ?>" onclick="return confirm('Yakin ?');" role="button"><i class="fas fa-trash"></i></a>
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                Action
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" href="edit_kelurahan.php?id_kelurahan=<?= $row["id_kelurahan"]; ?>">Edit</a></li>
+                                <li><a class="dropdown-item" href="delete_kelurahan.php?id_kelurahan=<?= $row["id_kelurahan"]; ?>" onclick="return confirm('Yakin ?');">Delete</a></li>
+                            </ul>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>

@@ -120,7 +120,7 @@ if (isset($_POST["search"])) {
                                                     <tr>
                                                         <th>ID Kelurahan</th>
                                                         <th>Nama Kelurahan</th>
-                                                        <th>Action</th>
+                                                        <th></th>
                                                     </tr>
                                                 </thead>
                                                 <?php foreach ($kelurahan as $kelurahan) : ?>
@@ -128,7 +128,17 @@ if (isset($_POST["search"])) {
                                                         <tr>
                                                             <td><?= $kelurahan["id_kelurahan"]; ?></td>
                                                             <td><?= $kelurahan["nama_kelurahan"]; ?></td>
-                                                            <td><a class="btn btn-sm btn-warning" href="edit_kelurahan.php?id_kelurahan=<?= $kelurahan["id_kelurahan"]; ?>" role="button"><i class="fas fa-edit"></i></a> | <a class="btn btn-sm btn-primary" href="delete_kelurahan.php?id_kelurahan=<?= $kelurahan["id_kelurahan"]; ?>" onclick="return confirm('Yakin ?');" role="button"><i class="fas fa-trash"></i></a></td>
+                                                            <td>
+                                                                <div class="dropdown">
+                                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                        Action
+                                                                    </button>
+                                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                        <li><a class="dropdown-item" href="edit_kelurahan.php?id_kelurahan=<?= $kelurahan["id_kelurahan"]; ?>">Edit</a></li>
+                                                                        <li><a class="dropdown-item" href="delete_kelurahan.php?id_kelurahan=<?= $kelurahan["id_kelurahan"]; ?>" onclick="return confirm('Yakin ?');">Delete</a></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 <?php endforeach; ?>

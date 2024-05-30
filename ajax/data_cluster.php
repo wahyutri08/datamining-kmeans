@@ -13,7 +13,7 @@ $cluster = query($query);
         <tr>
             <th>ID Cluster</th>
             <th>Nama Cluster</th>
-            <th>Action</th>
+            <th></th>
         </tr>
     </thead>
     <?php foreach ($cluster as $row) : ?>
@@ -21,7 +21,17 @@ $cluster = query($query);
             <tr>
                 <td><?= $row["id_cluster"]; ?></td>
                 <td><?= $row["nama_cluster"]; ?></td>
-                <td><a class="btn btn-sm btn-warning" href="edit_cluster.php?id_cluster=<?= $row["id_cluster"]; ?>" role="button"><i class="fas fa-edit"></i></a> | <a class="btn btn-sm btn-primary" href="delete_cluster.php?id_cluster=<?= $row["id_cluster"]; ?>" onclick="return confirm('Yakin ?');" role="button"><i class="fas fa-trash"></i></a></td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            Action
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" href="edit_cluster.php?id_cluster=<?= $row["id_cluster"]; ?>">Edit</a></li>
+                            <li><a class="dropdown-item" href="delete_cluster.php?id_cluster=<?= $row["id_cluster"]; ?>" onclick="return confirm('Yakin ?');">Delete</a></li>
+                        </ul>
+                    </div>
+                </td>
             </tr>
         </tbody>
     <?php endforeach; ?>

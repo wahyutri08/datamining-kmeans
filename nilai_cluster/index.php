@@ -110,7 +110,7 @@ $atribut = query("SELECT * FROM atribut");
                                                         <?php foreach ($atribut as $row) : ?>
                                                             <th><?= $row["nama_atribut"]; ?></th>
                                                         <?php endforeach; ?>
-                                                        <th>Action</th>
+                                                        <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -127,20 +127,27 @@ $atribut = query("SELECT * FROM atribut");
                                                                         echo " ";
                                                                     }
                                                                     ?>
-                                                                    <!-- <input type="text" id="<?= $rows["id_cluster"] . "_" . $row["id_atribut"] ?>"> -->
                                                                 </td>
                                                             <?php endforeach; ?>
-                                                            <td><a class="btn btn-sm btn-warning" href="editnilai.php?id_cluster=<?= $rows["id_cluster"]; ?>" onclick="edit(<?= $rows['id_cluster'] ?>) role=" button"><i class="fas fa-edit"></i></a>
-                                                                <?php
-                                                                // Pastikan $nilaikelurahan dan $rows terdefinisi dan memiliki nilai sebelum digunakan
-                                                                if (isset($nilaicluster[0]['nilai']) && isset($rows["id_cluster"])) {
-                                                                    if ($nilaicluster[0]['nilai'] !== null && $nilaicluster[0]['nilai'] !== "") {
-                                                                        echo '| <a class="btn btn-sm btn-danger" href="deletenilai.php?id_cluster=' . $rows["id_cluster"] . '" onclick="return confirm(\'Hapus Nilai?\');" role="button"><i class="fas fa-trash"></i</a>';
-                                                                    } else {
-                                                                        echo "";
-                                                                    }
-                                                                }
-                                                                ?>
+                                                            <td>
+                                                                <div class="dropdown">
+                                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                        Action
+                                                                    </button>
+                                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                        <li><a class="dropdown-item" href="editnilai.php?id_cluster=<?= $rows["id_cluster"]; ?>" onclick="edit(<?= $rows['id_cluster'] ?>)">Edit</a></li>
+                                                                        <?php
+                                                                        // Pastikan $nilaikelurahan dan $rows terdefinisi dan memiliki nilai sebelum digunakan
+                                                                        if (isset($nilaicluster[0]['nilai']) && isset($rows["id_cluster"])) {
+                                                                            if ($nilaicluster[0]['nilai'] !== null && $nilaicluster[0]['nilai'] !== "") {
+                                                                                echo '<li><a class="dropdown-item tombol-hapus" href="deletenilai.php?id_cluster=' . $rows["id_cluster"] . '">Delete</a></li>';
+                                                                            } else {
+                                                                                echo "";
+                                                                            }
+                                                                        }
+                                                                        ?>
+                                                                    </ul>
+                                                                </div>
                                                             </td>
                                                         </tr>
                                                     <?php endforeach; ?>

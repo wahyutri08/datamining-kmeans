@@ -114,7 +114,7 @@ $users = query("SELECT * FROM users");
                                                         <th>Nama</th>
                                                         <th>Email</th>
                                                         <th>Role</th>
-                                                        <th>Action</th>
+                                                        <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -135,7 +135,17 @@ $users = query("SELECT * FROM users");
                                                                 }
                                                                 ?>
                                                             </td>
-                                                            <td><a class="btn btn-sm btn-warning" href="edit_users.php?id=<?= $userData["id"]; ?>" role="button"><i class="fas fa-edit"></i></a> | <a class="btn btn-sm btn-primary" href="delete_users.php?id=<?= $userData["id"]; ?>" onclick="return confirm('Yakin ?');" role="button"><i class="fas fa-trash"></i></a></td>
+                                                            <td>
+                                                                <div class="dropdown">
+                                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                        Action
+                                                                    </button>
+                                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                        <li><a class="dropdown-item" href="edit_users.php?id=<?= $userData["id"]; ?>">Edit</a></li>
+                                                                        <li><a class="dropdown-item" href="delete_users.php?id=<?= $userData["id"]; ?>" onclick="return confirm('Yakin ?');">Delete</a></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </td>
                                                         </tr>
                                                         <?php $n++; ?>
                                                     <?php endforeach; ?>

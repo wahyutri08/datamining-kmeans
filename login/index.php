@@ -58,7 +58,7 @@ if (isset($_POST["login"])) {
 <![endif]-->
 </head>
 
-<body class="skin-default card-no-border">
+<body class="skin-default card-no-border" id="bg">
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->
@@ -72,7 +72,7 @@ if (isset($_POST["login"])) {
     <!-- Main wrapper - style you can find in pages.scss -->
     <!-- ============================================================== -->
     <section id="wrapper">
-        <div class="login-register" id="bg">
+        <div class="login-register">
             <div class="login-box card">
                 <div class="card-body">
                     <?php if (isset($error)) : ?>
