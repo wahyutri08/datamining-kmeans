@@ -11,14 +11,10 @@ $id_kelurahan = $_GET["id_kelurahan"];
 $kelurahan = query("SELECT * FROM kelurahan WHERE id_kelurahan = $id_kelurahan")[0];
 $atribut = query("SELECT * FROM atribut");
 
-if (isset($_POST["submit"])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     dataPostKelurahan($_POST, $_GET);
-    echo "
-    <script>
-    alert('Data Berhasil Diubah');
-    document.location.href = '../nilai_kelurahan';
-    </script>
-    ";
+    echo json_encode(["status" => "success", "message" => "Data Berhasil Diubah"]);
+    exit;
 }
 
 ?>
@@ -175,56 +171,37 @@ if (isset($_POST["submit"])) {
     <script src="../assets/dist/js/custom.min.js"></script>
     <!-- Sweet-Alert  -->
     <script src="../assets/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
-    <script src="../assets/node_modules/sweetalert2/sweet-alert.init.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery -->
     <script>
-        // $(document).ready(function() {
-        //     $('#sa-success').click(function(e) {
-        //         e.preventDefault();
-        //         Swal.fire('Good job!!!', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lorem erat eleifend ex semper, lobortis purus sed.', 'success')
-        //             .then(function() {
-        //                 window.location.href = '../nilai_kelurahan';
-        //             });
-        //     });
-        // });
-        // $(document).ready(function() {
-        //     $('#sa-success').click(function(e) {
-        //         e.preventDefault(); // Prevent default form submission
+        $(document).ready(function() {
+            $('#myForm').on('submit', function(e) {
+                e.preventDefault();
 
-        //         // Collect form data
-        //         var formData = $('#myForm').serialize();
-
-        //         // Send form data to server using AJAX
-        //         $.ajax({
-        //             url: '../tester.php', // URL of your PHP script
-        //             type: 'POST',
-        //             data: formData,
-        //             success: function(response) {
-        //                 // Handle success response
-        //                 Swal.fire({
-        //                     title: 'Good job!!!',
-        //                     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lorem erat eleifend ex semper, lobortis purus sed.',
-        //                     icon: 'success',
-        //                     confirmButtonText: 'OK'
-        //                 }).then(function(result) {
-        //                     if (result.isConfirmed) {
-        //                         // Redirect user after confirming
-        //                         window.location.href = '../nilai_kelurahan';
-        //                     }
-        //                 });
-        //             },
-        //             error: function(xhr, status, error) {
-        //                 // Handle error response
-        //                 Swal.fire({
-        //                     title: 'Error!',
-        //                     text: 'An error occurred while submitting the form.',
-        //                     icon: 'error',
-        //                     confirmButtonText: 'OK'
-        //                 });
-        //             }
-        //         });
-        //     });
-        // });
+                $.ajax({
+                    url: '',
+                    type: 'POST',
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        const res = JSON.parse(response);
+                        if (res.status === 'success') {
+                            Swal.fire({
+                                title: 'Success',
+                                text: res.message,
+                                type: 'success'
+                            }).then(() => {
+                                window.location.href = '../nilai_kelurahan';
+                            });
+                        } else {
+                            Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                    }
+                });
+            });
+        });
     </script>
 
 </body>

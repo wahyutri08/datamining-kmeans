@@ -25,8 +25,6 @@ $atribut = query("SELECT * FROM atribut");
     <title>Nilai Kelurahan - Data Mining</title>
     <!-- Custom CSS -->
     <link href="../assets/dist/css/style.min.css" rel="stylesheet">
-    <!-- sweetalert -->
-    <link href="../assets/node_modules/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" />
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -146,7 +144,7 @@ $atribut = query("SELECT * FROM atribut");
                                                                         // Pastikan $nilaikelurahan dan $rows terdefinisi dan memiliki nilai sebelum digunakan
                                                                         if (isset($nilaikelurahan[0]['nilai']) && isset($rows["id_kelurahan"])) {
                                                                             if ($nilaikelurahan[0]['nilai'] !== null && $nilaikelurahan[0]['nilai'] !== "") {
-                                                                                echo '<li><a class="dropdown-item tombol-hapus" href="deletenilai.php?id_kelurahan=' . $rows["id_kelurahan"] . '">Delete</a></li>';
+                                                                                echo '<li><a class="dropdown-item tombol-hapus" href="deletenilai.php?id_kelurahan=' . $rows['id_kelurahan'] . '">Delete</a></li>';
                                                                             } else {
                                                                                 echo "";
                                                                             }
@@ -207,92 +205,115 @@ $atribut = query("SELECT * FROM atribut");
     <script src="../assets/dist/js/custom.min.js"></script>
     <!-- Sweet-Alert  -->
     <script src="../assets/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
-    <script src="../assets/node_modules/sweetalert2/sweet-alert.init.js"></script>
-    <!-- <script src="script.js"></script> -->
-    <script>
-        function edit(params) {
-            var javascript_data = '<?php echo json_encode($atribut); ?>';
-            var data = JSON.parse(javascript_data);
-
-            // Membuat array kosong untuk menampung nama atribut
-            var namaAtributArray = [];
-
-            // Loop melalui setiap elemen dalam array dan menambahkan nilai 'nama_atribut' ke dalam array namaAtributArray
-            data.forEach(function(item) {
-                // Membuat variabel dengan nama dinamis berdasarkan kombinasi dari nilai id_atribut dan nama_atribut
-                var namaVariabel = 'atribut' + item.id_atribut;
-                console.log(item.id_atribut, $('#' + params + '_' + item.id_atribut).val())
-
-                // Memberikan nilai pada variabel dinamis
-                window[namaVariabel] = $('#' + params + '_' + item.id_atribut).val();
-            });
-
-            // Contoh penggunaan variabel yang telah dibuat secara dinamis
-            console.log(atribut_1);
-            console.log(atribut_2);
-            console.log(atribut_3);
-            console.log(atribut_4);
-            console.log(params, javascript_data)
-        }
-    </script>
-    <script>
-        $('.tombol-hapus').on('click', function(e) {
-            e.preventDefault();
-            const href = $(this).attr('href');
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.value) {
-                    // Swal.fire(
-                    //     'Deleted!',
-                    //     'Your file has been deleted.',
-                    //     'success'
-                    // );
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'Your file has been deleted.',
-                        type: 'success',
-                        showConfirmButton: false // Ini akan menghilangkan tombol OK
-                    });
-                    setTimeout(function() {
-                        document.location.href = href;
-                    }, 2000);
-                }
-            });
-        });
-    </script>
     <script>
         $(document).ready(function() {
-            // hilangkan tombol cari
-            $('#tombol-cari').hide();
+            $('.tombol-hapus').on('click', function(e) {
+                e.preventDefault();
+                const href = $(this).attr('href');
 
-            // event ketika keyword ditulis
-            $('#keyword').on('keyup', function() {
-                // munculkan icon loading
-                // $('.loader').show();
-
-                // ajax menggunakan load
-                // $('#container').load('ajax/mahasiswa.php?keyword=' + $('#keyword').val());
-
-                // $.get()
-                $.get('../ajax/data_nilaikelurahan.php?keyword=' + $('#keyword').val(), function(data) {
-
-                    $('.table-responsive').html(data);
-                    // $('.loader').hide();
-                    // $('#pagination-container').html($('#pagination-container').html());
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: href,
+                            type: 'GET',
+                            success: function(response) {
+                                let res = JSON.parse(response);
+                                if (res.status === 'success') {
+                                    Swal.fire({
+                                        title: 'Deleted!',
+                                        text: 'Your file has been deleted.',
+                                        type: 'success',
+                                        showConfirmButton: true,
+                                    }).then(() => {
+                                        window.location.href = '../nilai_kelurahan';
+                                    });
+                                } else if (res.status === 'error') {
+                                    Swal.fire('Error', 'Data Gagal Dihapus', 'error');
+                                } else if (res.status === 'redirect') {
+                                    window.location.href = '../login';
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                            }
+                        });
+                    }
                 });
-
             });
 
+            // Fungsi untuk menangani kueri pencarian
+            function handleSearchQuery() {
+                var keyword = $('#keyword').val();
+                $.get('../ajax/data_nilaikelurahan.php?keyword=' + keyword, function(data) {
+                    $('.table-responsive').html(data);
+                    // Initialize ulang tombol-hapus setelah memuat data baru
+                    $('.tombol-hapus').on('click', function(e) {
+                        e.preventDefault();
+                        const href = $(this).attr('href');
+
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this!",
+                            type: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            if (result.value) {
+                                $.ajax({
+                                    url: href,
+                                    type: 'GET',
+                                    success: function(response) {
+                                        let res = JSON.parse(response);
+                                        if (res.status === 'success') {
+                                            Swal.fire({
+                                                title: 'Deleted!',
+                                                text: 'Your file has been deleted.',
+                                                type: 'success',
+                                                showConfirmButton: true
+                                            }).then(() => {
+                                                window.location.href = '../nilai_kelurahan';
+                                            });
+                                        } else if (res.status === 'error') {
+                                            Swal.fire('Error', 'Data Gagal Dihapus', 'error');
+                                        } else if (res.status === 'redirect') {
+                                            window.location.href = '../login';
+                                        }
+                                    },
+                                    error: function() {
+                                        Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                                    }
+                                });
+                            }
+                        });
+                    });
+                });
+            }
+
+            // Sembunyikan tombol cari saat halaman dimuat
+            $('#tombol-cari').hide();
+
+            // Event ketika tombol cari ditekan
+            $('#tombol-cari').on('click', function(e) {
+                e.preventDefault();
+                handleSearchQuery();
+            });
+
+            // Event ketika mengetik di kolom pencarian
+            $('#keyword').on('keyup', function() {
+                handleSearchQuery();
+            });
         });
     </script>
-</body>
 </body>
 
 </html>

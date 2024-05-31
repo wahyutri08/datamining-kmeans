@@ -178,3 +178,56 @@ if (isset($_POST["submit"])) {
 </body>
 
 </html>
+<script>
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.value) {
+            // Swal.fire(
+            //     'Deleted!',
+            //     'Your file has been deleted.',
+            //     'success'
+            // );
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'Your file has been deleted.',
+                type: 'success',
+                showConfirmButton: false // Ini akan menghilangkan tombol OK
+            });
+            setTimeout(function() {
+                document.location.href = href;
+            }, 2000);
+        }
+    });
+</script>
+
+<?php
+session_start();
+include_once("../auth_check.php");
+if (!isset($_SESSION["login"])) {
+    header("Location: ../login");
+    exit;
+}
+
+$id_kelurahan = $_GET["id_kelurahan"];
+
+if (deletenilaiKelurahan($id_kelurahan) > 0) {
+    echo "
+    <script> 
+        document.location.href = '../nilai_kelurahan';
+    </script>
+    ";
+} else {
+    echo "<script> 
+    alert('Data Gagal Dihapus');
+    document.location.href = '../nilai_kelurahan';
+</script>
+";
+}
+?>

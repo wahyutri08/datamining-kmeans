@@ -89,6 +89,12 @@ if (isset($_POST['save_report'])) {
     }
 }
 
+// if (isset($_POST['submit'])) {
+//     echo "<script>
+//     alert('Proses Perhitungan Berhasil');
+//     </script>";
+// }
+
 ?>
 
 <!DOCTYPE html>

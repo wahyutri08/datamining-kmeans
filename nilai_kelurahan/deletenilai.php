@@ -1,23 +1,18 @@
 <?php
 session_start();
 include_once("../auth_check.php");
+
 if (!isset($_SESSION["login"])) {
-    header("Location: ../login");
+    echo json_encode(['status' => 'redirect']);
     exit;
 }
-// require '../functions.php';
+
+// Pastikan fungsi deletenilaiKelurahan sudah didefinisikan dan bekerja dengan benar
 $id_kelurahan = $_GET["id_kelurahan"];
 
 if (deletenilaiKelurahan($id_kelurahan) > 0) {
-    echo "
-    <script> 
-        document.location.href = '../nilai_kelurahan';
-    </script>
-    ";
+    echo json_encode(['status' => 'success']);
 } else {
-    echo "<script> 
-    alert('Data Gagal Dihapus');
-    document.location.href = '../nilai_kelurahan';
-</script>
-";
+    echo json_encode(['status' => 'error']);
 }
+exit;

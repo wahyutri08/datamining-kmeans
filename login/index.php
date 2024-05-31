@@ -3,10 +3,10 @@ session_start();
 require_once '../functions.php';
 
 if (isset($_POST["login"])) {
-    $username = $_POST["username"];
+    $usernameOremail = $_POST["username"];
     $password = $_POST["password"];
 
-    $result = mysqli_query($db, "SELECT * FROM users WHERE username = '$username'");
+    $result = mysqli_query($db, "SELECT * FROM users WHERE username = '$usernameOremail' OR email = '$usernameOremail'");
 
     if (mysqli_num_rows($result) === 1) {
         $row = mysqli_fetch_assoc($result);
@@ -77,7 +77,7 @@ if (isset($_POST["login"])) {
                 <div class="card-body">
                     <?php if (isset($error)) : ?>
                         <script>
-                            alert('Username dan Password Salah');
+                            alert('Username Atau Email dan Password Salah');
                             document.location.href = '../login';
                         </script>
                     <?php endif; ?>
@@ -88,7 +88,7 @@ if (isset($_POST["login"])) {
                         <h3 class="text-center m-t-20 m-b-10">Sign In</h3>
                         <div class="form-group ">
                             <div class="col-xs-12">
-                                <input class="form-control" id="username" name="username" type="text" required="" placeholder="Username">
+                                <input class="form-control" id="username" name="username" type="text" required="" placeholder="Username" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group">
