@@ -29,7 +29,7 @@ $atribut = query($query);
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li><a class="dropdown-item" href="edit_atribut.php?id_atribut=<?= $row["id_atribut"]; ?>">Edit</a></li>
-                                <li><a class="dropdown-item" href="delete_atribut.php?id_atribut=<?= $row["id_atribut"]; ?>" onclick="return confirm('Yakin ?');">Delete</a></li>
+                                <li><a class="dropdown-item tombol-hapus" href="delete_atribut.php?id_atribut=<?= $row["id_atribut"]; ?>">Delete</a></li>
                             </ul>
                         </div>
                     </td>

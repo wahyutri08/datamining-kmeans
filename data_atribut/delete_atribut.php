@@ -9,16 +9,8 @@ if (!isset($_SESSION["login"])) {
 $id_atribut = $_GET["id_atribut"];
 
 if (deleteAtribut($id_atribut) > 0) {
-    echo "
-    <script> 
-        alert('Data Berhasil Dihapus');
-        document.location.href = '../data_atribut';
-    </script>
-    ";
+    echo json_encode(['status' => 'success']);
 } else {
-    echo "<script> 
-    alert('Data Gagal Dihapus');
-    document.location.href = '../data_atribut';
-</script>
-";
+    echo json_encode(['status' => 'error']);
 }
+exit;

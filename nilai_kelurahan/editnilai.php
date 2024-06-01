@@ -12,6 +12,13 @@ $kelurahan = query("SELECT * FROM kelurahan WHERE id_kelurahan = $id_kelurahan")
 $atribut = query("SELECT * FROM atribut");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Pengecekan apakah ada data yang diinput
+    if (empty($_POST)) {
+        echo json_encode(["status" => "error", "message" => "Tidak ada data yang diinput"]);
+        exit;
+    }
+
+    // Memanggil fungsi jika ada data yang diinput
     dataPostKelurahan($_POST, $_GET);
     echo json_encode(["status" => "success", "message" => "Data Berhasil Diubah"]);
     exit;
@@ -193,7 +200,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 window.location.href = '../nilai_kelurahan';
                             });
                         } else {
-                            Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                            if (res.message === 'Tidak ada data yang diinput') {
+                                Swal.fire('Error', res.message, 'error');
+                            } else {
+                                Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                            }
                         }
                     },
                     error: function() {

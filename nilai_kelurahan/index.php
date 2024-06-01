@@ -213,7 +213,7 @@ $atribut = query("SELECT * FROM atribut");
 
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
+                    text: "Data Akan Dihapus",
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -229,7 +229,7 @@ $atribut = query("SELECT * FROM atribut");
                                 if (res.status === 'success') {
                                     Swal.fire({
                                         title: 'Deleted!',
-                                        text: 'Your file has been deleted.',
+                                        text: 'Data Berhasil Dihapus',
                                         type: 'success',
                                         showConfirmButton: true,
                                     }).then(() => {
@@ -261,7 +261,7 @@ $atribut = query("SELECT * FROM atribut");
 
                         Swal.fire({
                             title: 'Are you sure?',
-                            text: "You won't be able to revert this!",
+                            text: "Data Akan Dihapus",
                             type: 'warning',
                             showCancelButton: true,
                             confirmButtonColor: '#3085d6',
@@ -277,7 +277,7 @@ $atribut = query("SELECT * FROM atribut");
                                         if (res.status === 'success') {
                                             Swal.fire({
                                                 title: 'Deleted!',
-                                                text: 'Your file has been deleted.',
+                                                text: 'Data Berhasil Dihapus',
                                                 type: 'success',
                                                 showConfirmButton: true
                                             }).then(() => {

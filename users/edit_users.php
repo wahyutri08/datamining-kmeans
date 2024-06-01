@@ -1,30 +1,4 @@
 <?php
-// session_start();
-// if (!isset($_SESSION["login"])) {
-//     header("Location:../login");
-//     exit;
-// }
-// require_once '../functions.php';
-
-// $id = $_GET["id"];
-// $users = query("SELECT * FROM users WHERE id = $id")[0];
-
-// if (isset($_POST["submit"])) {
-//     if (editUsers($_POST) > 0) {
-//         echo "
-//         <script>
-//         alert('Data Berhasil Diubah');
-//         document.location.href = '../users'
-//         </script>";
-//     } else {
-//         echo "
-//         <script>
-//         alert('Data Gagal Diubah');
-//         document.location.href = '../users';
-//         </script>";
-//     }
-// }
-
 session_start();
 include_once("../auth_check.php");
 if (!isset($_SESSION["login"])) {
@@ -36,7 +10,6 @@ if ($_SESSION['role'] !== 'Admin') {
     header("Location: ../dashboard");
     exit;
 }
-// require_once '../functions.php';
 
 $id = $_GET["id"];
 $users = query("SELECT * FROM users WHERE id = $id")[0];

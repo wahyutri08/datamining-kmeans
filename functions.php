@@ -3,8 +3,6 @@ $db = mysqli_connect("localhost", "root", "", "dev-datamining");
 
 function query($query)
 {
-    // var_dump($query);
-    // exit();
     global $db;
     $result = mysqli_query($db, $query);
     $rows = [];
@@ -71,15 +69,6 @@ function upload()
     $error = $_FILES['avatar']['error'];
     $tmpName = $_FILES['avatar']['tmp_name'];
 
-    // cek apakah tidak ada gambar yang diupload
-
-    // if ($error === 4) {
-    //     echo "<script>
-    //             alert('Please Insert Image')
-    //           </script>";
-    //     return false;
-    // }
-
     // Cek apakah yang diupload adalah gambar
     $ekstensiAvatarValid = ['', 'jpg', 'jpeg', 'png'];
     $ekstensiAvatar = explode('.', $namaFile);
@@ -125,16 +114,6 @@ function editProfile($data)
     } else {
         $avatar = upload();
     }
-
-    // $result = mysqli_query($db, "SELECT * FROM users WHERE username = '$username'");
-    // if (mysqli_fetch_assoc($result)) {
-    //     echo "
-    //     <script>
-    //     alert('Username Alredy In Use');
-    //     </script>
-    //     ";
-    //     return false;
-    // }
 
     $query = "UPDATE users SET 
         nama = '$nama',  
@@ -187,16 +166,6 @@ function editUsers($data)
         $avatar = upload();
     }
 
-    // $result = mysqli_query($db, "SELECT * FROM users WHERE username = '$username'");
-    // if (mysqli_fetch_assoc($result)) {
-    //     echo "
-    //     <script>
-    //     alert('Username Already In Use');
-    //     </script>
-    //     ";
-    //     return false;
-    // }
-
     $password = password_hash($password, PASSWORD_DEFAULT);
     $query = "UPDATE users SET 
         username = '$username', 
@@ -223,14 +192,19 @@ function addAtribut($data)
     $id_atribut = htmlspecialchars($data["id_atribut"]);
     $nama_atribut = htmlspecialchars($data["nama_atribut"]);
 
-    $result = mysqli_query($db, "SELECT * FROM atribut WHERE nama_atribut = '$nama_atribut'");
+    $query = "SELECT * FROM atribut WHERE nama_atribut = '$nama_atribut' AND id_atribut != $id_atribut";
+    $result = mysqli_query($db, $query);
     if (mysqli_fetch_assoc($result)) {
-        echo "
-        <script>
-        alert('Nama Atribut Tidak Boleh Sama');
-        </script>
-        ";
-        return false;
+        return -1;
+    }
+
+    // Periksa apakah ID atribut sudah ada
+    $query_id = "SELECT * FROM atribut WHERE id_atribut = $id_atribut";
+    $result_id = mysqli_query($db, $query_id);
+
+    if (mysqli_fetch_assoc($result_id)) {
+        // ID atribut tidak ditemukan
+        return -2;
     }
 
     $query = "INSERT INTO atribut VALUES 
@@ -243,25 +217,25 @@ function addAtribut($data)
 function editAtribut($data)
 {
     global $db;
-    $id_atribut = ($data["id_atribut"]);
+    $id_atribut = $data["id_atribut"];
     $nama_atribut = htmlspecialchars($data["nama_atribut"]);
+    $nama_atribut = mysqli_real_escape_string($db, $nama_atribut);
 
-    $result = mysqli_query($db, "SELECT * FROM atribut WHERE nama_atribut = '$nama_atribut'");
+    // Periksa apakah nama atribut sudah ada, tetapi abaikan baris yang sedang diedit
+    $query = "SELECT * FROM atribut WHERE nama_atribut = '$nama_atribut' AND id_atribut != $id_atribut";
+    $result = mysqli_query($db, $query);
+
     if (mysqli_fetch_assoc($result)) {
-        echo "
-        <script>
-        alert('Nama Atribut Tidak Boleh Sama');
-        </script>
-        ";
-        return false;
+        return -1;
     }
 
-    $query = "UPDATE atribut SET 
-        nama_atribut = '$nama_atribut' WHERE id_atribut = $id_atribut";
+    // Jika nama atribut tidak ada yang duplikat, lakukan update
+    $query = "UPDATE atribut SET nama_atribut = '$nama_atribut' WHERE id_atribut = $id_atribut";
     mysqli_query($db, $query);
 
     return mysqli_affected_rows($db);
 }
+
 
 function deleteAtribut($id_atribut)
 {
