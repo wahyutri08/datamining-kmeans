@@ -251,13 +251,19 @@ function addKelurahan($data)
     $id_kelurahan = htmlspecialchars($data["id_kelurahan"]);
     $nama_kelurahan = htmlspecialchars($data["nama_kelurahan"]);
 
-    $result = mysqli_query($db, "SELECT * FROM kelurahan WHERE nama_kelurahan = '$nama_kelurahan'");
+    $query = "SELECT * FROM kelurahan WHERE nama_kelurahan = '$nama_kelurahan' AND id_kelurahan != $id_kelurahan";
+    $result = mysqli_query($db, $query);
     if (mysqli_fetch_assoc($result)) {
-        echo "
-        <script>
-        alert('Nama Kelurahan Tidak Boleh Sama');
-        </script>";
-        return false;
+        return -1;
+    }
+
+    // Periksa apakah ID atribut sudah ada
+    $query_id = "SELECT * FROM kelurahan WHERE id_kelurahan = $id_kelurahan";
+    $result_id = mysqli_query($db, $query_id);
+
+    if (mysqli_fetch_assoc($result_id)) {
+        // ID atribut tidak ditemukan
+        return -2;
     }
 
     $query = "INSERT INTO kelurahan VALUES 
@@ -273,13 +279,12 @@ function editKelurahan($data)
     $id_kelurahan = ($data["id_kelurahan"]);
     $nama_kelurahan = htmlspecialchars($data["nama_kelurahan"]);
 
-    $result = mysqli_query($db, "SELECT * FROM kelurahan WHERE nama_kelurahan = '$nama_kelurahan'");
+    // Periksa apakah nama atribut sudah ada, tetapi abaikan baris yang sedang diedit
+    $query = "SELECT * FROM kelurahan WHERE nama_kelurahan = '$nama_kelurahan' AND id_kelurahan != $id_kelurahan";
+    $result = mysqli_query($db, $query);
+
     if (mysqli_fetch_assoc($result)) {
-        echo "
-        <script>
-        alert('Nama Kelurahan Tidak Boleh Sama');
-        </script>";
-        return false;
+        return -1;
     }
 
     $query = "UPDATE kelurahan SET 
@@ -302,13 +307,19 @@ function addCluster($data)
     $id_cluster = htmlspecialchars($data["id_cluster"]);
     $nama_cluster = htmlspecialchars($data["nama_cluster"]);
 
-    $result = mysqli_query($db, "SELECT * FROM cluster WHERE nama_cluster = '$nama_cluster'");
-
+    $query = "SELECT * FROM cluster WHERE nama_cluster = '$nama_cluster' AND id_cluster != $id_cluster";
+    $result = mysqli_query($db, $query);
     if (mysqli_fetch_assoc($result)) {
-        echo "<script>
-            alert('Nama Cluster Tidak Boleh Sama');
-            </script>";
-        return false;
+        return -1;
+    }
+
+    // Periksa apakah ID atribut sudah ada
+    $query_id = "SELECT * FROM cluster WHERE id_cluster = $id_cluster";
+    $result_id = mysqli_query($db, $query_id);
+
+    if (mysqli_fetch_assoc($result_id)) {
+        // ID atribut tidak ditemukan
+        return -2;
     }
 
 
@@ -634,4 +645,47 @@ function getInitialClusters($data, $initialCentroids)
         'clusters' => $clusters,
         'distances' => $distances,
     ];
+}
+
+
+function simpanhasilakhir($centroids, $clusters, $history, $id_user, $dateReport, $kelurahan, $data, $atribut)
+{
+    global $db;
+
+    // Masukkan data ke tabel laporan
+    $query = "INSERT INTO laporan (user_id, tanggal_laporan) VALUES ('$id_user', '$dateReport')";
+    if (mysqli_query($db, $query)) {
+        $id_laporan = mysqli_insert_id($db);
+
+        // Masukkan data ke tabel laporan_hasil_akhir
+        foreach ($clusters as $clusterId => $clusterData) {
+            foreach ($clusterData as $dataIndex) {
+                $nama_kelurahan = $kelurahan[$dataIndex]['nama_kelurahan'];
+                $nama_cluster = 'Cluster ' . ($clusterId + 1);
+
+                $query = "INSERT INTO laporan_hasil_akhir (id_laporan, nama_kelurahan, nama_cluster) VALUES ('$id_laporan', '$nama_kelurahan', '$nama_cluster')";
+                if (mysqli_query($db, $query)) {
+                    $id_laporan_hasil_akhir = mysqli_insert_id($db);
+
+                    // Masukkan data ke tabel laporan_hasil_akhir_atribut
+                    foreach ($data[$dataIndex] as $attrIndex => $value) {
+                        $nama_atribut = $atribut[$attrIndex]['nama_atribut'];
+                        $nilai = number_format($value);
+
+                        $query = "INSERT INTO laporan_hasil_akhir_atribut (id_laporan_hasil_akhir, nama_atribut, nilai) VALUES ('$id_laporan_hasil_akhir', '$nama_atribut', '$nilai')";
+                        if (!mysqli_query($db, $query)) {
+                            var_dump($db);
+                            exit;
+                        }
+                    }
+                } else {
+                    echo "Error: " . mysqli_error($db) . "<br>";
+                }
+            }
+        }
+
+        echo "Data berhasil disimpan dengan ID laporan: " . $id_laporan . "<br>";
+    } else {
+        echo "Error: " . mysqli_error($db) . "<br>";
+    }
 }

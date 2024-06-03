@@ -47,7 +47,13 @@ foreach ($cluster as $cls) {
 
 // Default nilai K dan iterasi
 $defaultIterations = 1000;
-$maxIterations = isset($_POST['iterasi']) ? intval($_POST['iterasi']) : $defaultIterations;
+
+if (isset($_POST['iterasi'])) {
+    $maxIterations = intval($_POST['iterasi']);
+} else {
+    $maxIterations = $defaultIterations;
+}
+
 
 // Dapatkan hasil clustering awal sebelum iterasi pertama
 $initialResult = getInitialClusters($data, $initialCentroids);
@@ -57,6 +63,10 @@ $result = kmeans($data, $initialCentroids, $maxIterations);
 $centroids = $result['centroids'];
 $clusters = $result['clusters'];
 $history = $result['history'];
+
+if (isset($_POST['iterasi'])) {
+    simpanhasilakhir($centroids, $clusters, $history, $_SESSION['id'], date('Y-m-d H:i:s'), $kelurahan, $data, $atribut);
+}
 
 // Simpan hasil ke database
 if (isset($_POST['save_report'])) {

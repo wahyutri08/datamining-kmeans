@@ -127,7 +127,7 @@ if (isset($_POST["search"])) {
                                                                     </button>
                                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                         <li><a class="dropdown-item" href="edit_cluster.php?id_cluster=<?= $cluster["id_cluster"]; ?>">Edit</a></li>
-                                                                        <li><a class="dropdown-item" href="delete_cluster.php?id_cluster=<?= $cluster["id_cluster"]; ?>" onclick="return confirm('Yakin ?');">Delete</a></li>
+                                                                        <li><a class="dropdown-item tombol-hapus" href="delete_cluster.php?id_cluster=<?= $cluster["id_cluster"]; ?>">Delete</a></li>
                                                                     </ul>
                                                                 </div>
                                                             </td>
@@ -181,29 +181,115 @@ if (isset($_POST["search"])) {
     <script src="../assets/node_modules/sparkline/jquery.sparkline.min.js"></script>
     <!--Custom JavaScript -->
     <script src="../assets/dist/js/custom.min.js"></script>
+    <!-- Sweet-Alert  -->
+    <script src="../assets/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
     <script>
         $(document).ready(function() {
-            // hilangkan tombol cari
-            $('#tombol-cari').hide();
+            $('.tombol-hapus').on('click', function(e) {
+                e.preventDefault();
+                const href = $(this).attr('href');
 
-            // event ketika keyword ditulis
-            $('#keyword').on('keyup', function() {
-                // munculkan icon loading
-                // $('.loader').show();
-
-                // ajax menggunakan load
-                // $('#container').load('ajax/mahasiswa.php?keyword=' + $('#keyword').val());
-
-                // $.get()
-                $.get('../ajax/data_cluster.php?keyword=' + $('#keyword').val(), function(data) {
-
-                    $('.table-responsive').html(data);
-                    // $('.loader').hide();
-
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Data Akan Dihapus",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: href,
+                            type: 'GET',
+                            success: function(response) {
+                                let res = JSON.parse(response);
+                                if (res.status === 'success') {
+                                    Swal.fire({
+                                        title: 'Deleted!',
+                                        text: 'Data Berhasil Dihapus',
+                                        type: 'success',
+                                        showConfirmButton: true,
+                                    }).then(() => {
+                                        window.location.href = '../data_cluster';
+                                    });
+                                } else if (res.status === 'error') {
+                                    Swal.fire('Error', 'Data Gagal Dihapus', 'error');
+                                } else if (res.status === 'redirect') {
+                                    window.location.href = '../login';
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                            }
+                        });
+                    }
                 });
-
             });
 
+            // Fungsi untuk menangani kueri pencarian
+            function handleSearchQuery() {
+                var keyword = $('#keyword').val();
+                $.get('../ajax/data_cluster.php?keyword=' + keyword, function(data) {
+                    $('.table-responsive').html(data);
+                    // Initialize ulang tombol-hapus setelah memuat data baru
+                    $('.tombol-hapus').on('click', function(e) {
+                        e.preventDefault();
+                        const href = $(this).attr('href');
+
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "Data Akan Dihapus",
+                            type: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            if (result.value) {
+                                $.ajax({
+                                    url: href,
+                                    type: 'GET',
+                                    success: function(response) {
+                                        let res = JSON.parse(response);
+                                        if (res.status === 'success') {
+                                            Swal.fire({
+                                                title: 'Deleted!',
+                                                text: 'Data Berhasil Dihapus',
+                                                type: 'success',
+                                                showConfirmButton: true
+                                            }).then(() => {
+                                                window.location.href = '../data_cluster';
+                                            });
+                                        } else if (res.status === 'error') {
+                                            Swal.fire('Error', 'Data Gagal Dihapus', 'error');
+                                        } else if (res.status === 'redirect') {
+                                            window.location.href = '../login';
+                                        }
+                                    },
+                                    error: function() {
+                                        Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                                    }
+                                });
+                            }
+                        });
+                    });
+                });
+            }
+
+            // Sembunyikan tombol cari saat halaman dimuat
+            $('#tombol-cari').hide();
+
+            // Event ketika tombol cari ditekan
+            $('#tombol-cari').on('click', function(e) {
+                e.preventDefault();
+                handleSearchQuery();
+            });
+
+            // Event ketika mengetik di kolom pencarian
+            $('#keyword').on('keyup', function() {
+                handleSearchQuery();
+            });
         });
     </script>
 </body>

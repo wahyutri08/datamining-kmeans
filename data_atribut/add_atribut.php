@@ -9,9 +9,9 @@ if (!isset($_SESSION["login"])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = addAtribut($_POST);
     if ($result > 0) {
-        echo json_encode(["status" => "success", "message" => "Data Berhasil Diubah"]);
+        echo json_encode(["status" => "success", "message" => "Data Berhasil Ditambahkan"]);
     } elseif ($result == -1) {
-        echo json_encode(["status" => "error", "message" => "Nama atribut Sudah Ada"]);
+        echo json_encode(["status" => "error", "message" => "Nama Atribut Sudah Ada"]);
     } elseif ($result == -2) {
         echo json_encode(["status" => "error", "message" => "ID Atribut Sudah Ada"]);
     } else {
@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <label for="id_atribut" class="col-sm-2 control-label">ID Atribut<span class="text-danger">*</span></label>
                                         <div class="col-sm-8">
                                             <div class="input-group">
-                                                <input type="text" class="form-control" id="id_atribut" name="id_atribut" placeholder="ID Atribut" required>
+                                                <input type="number" class="form-control" id="id_atribut" name="id_atribut" placeholder="ID Atribut" required>
                                             </div>
                                         </div>
                                     </div>

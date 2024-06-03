@@ -122,7 +122,7 @@ $pagination .= '</ul>';
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li><a class="dropdown-item" href="edit_kelurahan.php?id_kelurahan=<?= $row["id_kelurahan"]; ?>">Edit</a></li>
-                                <li><a class="dropdown-item" href="delete_kelurahan.php?id_kelurahan=<?= $row["id_kelurahan"]; ?>" onclick="return confirm('Yakin ?');">Delete</a></li>
+                                <li><a class="dropdown-item tombol-hapus" href="delete_kelurahan.php?id_kelurahan=<?= $row["id_kelurahan"]; ?>">Delete</a></li>
                             </ul>
                         </div>
                     </td>

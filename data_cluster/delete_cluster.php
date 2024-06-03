@@ -9,16 +9,8 @@ if (!isset($_SESSION["login"])) {
 $id_cluster = $_GET["id_cluster"];
 
 if (deleteCluster($id_cluster) > 0) {
-    echo "
-    <script> 
-        alert('Data Berhasil Dihapus');
-        document.location.href = '../data_cluster';
-    </script>
-    ";
+    echo json_encode(['status' => 'success']);
 } else {
-    echo "<script> 
-    alert('Data Gagal Dihapus');
-    document.location.href = '../data_cluster';
-</script>
-";
+    echo json_encode(['status' => 'error']);
 }
+exit;

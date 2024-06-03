@@ -5,26 +5,22 @@ if (!isset($_SESSION["login"])) {
     header("Location:../login");
     exit;
 }
-// require_once '../functions.php';
 
 $id_kelurahan = $_GET["id_kelurahan"];
 $kelurahan = query("SELECT * FROM kelurahan WHERE id_kelurahan = $id_kelurahan")[0];
 
-if (isset($_POST["submit"])) {
-    if (editKelurahan($_POST) > 0) {
-        echo "
-        <script>
-        alert('Data Berhasil Diubah');
-        document.location.href = '../data_kelurahan'
-        </script>";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $result = editKelurahan($_POST);
+    if ($result > 0) {
+        echo json_encode(["status" => "success", "message" => "Data Berhasil Diubah"]);
+    } elseif ($result == -1) {
+        echo json_encode(["status" => "error", "message" => "Nama Kelurahan Sudah Ada Sebelumnya"]);
     } else {
-        echo "
-        <script>
-        alert('Data Gagal Diubah');
-        document.location.href = '../data_kelurahan';
-        </script>";
+        echo json_encode(["status" => "error", "message" => "Data Gagal Diubah"]);
     }
+    exit;
 }
+
 
 ?>
 
@@ -110,7 +106,7 @@ if (isset($_POST["submit"])) {
                             <div class="card-body">
                                 <h4 class="card-title">Edit Kelurahan</h4>
                                 <h6 class="card-subtitle"><?= $kelurahan["nama_kelurahan"]; ?></h6>
-                                <form class="form-horizontal p-t-20" method="POST" action="" enctype="multipart/form-data">
+                                <form class="form-horizontal p-t-20" method="POST" action="" enctype="multipart/form-data" id="myForm">
                                     <input type="hidden" name="id_kelurahan" value="<?= $kelurahan["id_kelurahan"]; ?>">
                                     <div class="form-group row">
                                         <label for="nama_kelurahan" class="col-sm-3 control-label">Nama Kelurahan<span class="text-danger">*</span></label>
@@ -169,48 +165,38 @@ if (isset($_POST["submit"])) {
     <script src="../assets/node_modules/sparkline/jquery.sparkline.min.js"></script>
     <!--Custom JavaScript -->
     <script src="../assets/dist/js/custom.min.js"></script>
-    <!-- jQuery file upload -->
-    <script src="../assets/node_modules/dropify/dist/js/dropify.min.js"></script>
+    <!-- Sweet-Alert  -->
+    <script src="../assets/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Basic
-            $('.dropify').dropify();
-
-            // Translated
-            $('.dropify-fr').dropify({
-                messages: {
-                    default: 'Glissez-déposez un fichier ici ou cliquez',
-                    replace: 'Glissez-déposez un fichier ou cliquez pour remplacer',
-                    remove: 'Supprimer',
-                    error: 'Désolé, le fichier trop volumineux'
-                }
-            });
-
-            // Used events
-            var drEvent = $('#input-file-events').dropify();
-
-            drEvent.on('dropify.beforeClear', function(event, element) {
-                return confirm("Do you really want to delete \"" + element.file.name + "\" ?");
-            });
-
-            drEvent.on('dropify.afterClear', function(event, element) {
-                alert('File deleted');
-            });
-
-            drEvent.on('dropify.errors', function(event, element) {
-                console.log('Has Errors');
-            });
-
-            var drDestroy = $('#input-file-to-destroy').dropify();
-            drDestroy = drDestroy.data('dropify')
-            $('#toggleDropify').on('click', function(e) {
+            $('#myForm').on('submit', function(e) {
                 e.preventDefault();
-                if (drDestroy.isDropified()) {
-                    drDestroy.destroy();
-                } else {
-                    drDestroy.init();
-                }
-            })
+
+                $.ajax({
+                    url: '',
+                    type: 'POST',
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        const res = JSON.parse(response);
+                        if (res.status === 'success') {
+                            Swal.fire({
+                                title: 'Success',
+                                text: res.message,
+                                type: 'success'
+                            }).then(() => {
+                                window.location.href = '../data_kelurahan';
+                            });
+                        } else {
+                            Swal.fire('Error', res.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                    }
+                });
+            });
         });
     </script>
 </body>
