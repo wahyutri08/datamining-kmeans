@@ -64,46 +64,11 @@ $centroids = $result['centroids'];
 $clusters = $result['clusters'];
 $history = $result['history'];
 
+// Mengatur zona waktu
+date_default_timezone_set('Asia/Jakarta');
 if (isset($_POST['iterasi'])) {
     simpanhasilakhir($centroids, $clusters, $history, $_SESSION['id'], date('Y-m-d H:i:s'), $kelurahan, $data, $atribut);
 }
-
-// Simpan hasil ke database
-if (isset($_POST['save_report'])) {
-    $userId = $_SESSION['id']; // Asumsikan user ID disimpan di session
-    $reportDate = date('Y-m-d H:i:s');
-
-    // Simpan metadata laporan
-    $insertReport = "INSERT INTO laporan (user_id, tanggal_laporan) VALUES ($userId, '$reportDate')";
-    if (mysqli_query($db, $insertReport)) {
-        $reportId = mysqli_insert_id($db);
-
-        // Simpan hasil clustering akhir
-        foreach ($clusters as $clusterId => $clusterData) {
-            foreach ($clusterData as $dataIndex) {
-                $kelurahanName = $kelurahan[$dataIndex]['nama_kelurahan'];
-                foreach ($data[$dataIndex] as $attrIndex => $value) {
-                    $attrName = $atribut[$attrIndex]['nama_atribut'];
-                    $query = "INSERT INTO report_history (report_id, nama_kelurahan, nama_atribut, cluster, nilai) VALUES ($reportId, '$kelurahanName', '$attrName', " . ($clusterId + 1) . ", $value)";
-                    mysqli_query($db, $query);
-                }
-            }
-        }
-        echo "
-        <script>
-        alert('Perhitungan Berhasil Ditambahkan');
-        document.location.href = '../laporan'
-        </script>";
-    } else {
-        echo "Gagal menyimpan laporan: " . mysqli_error($db);
-    }
-}
-
-// if (isset($_POST['submit'])) {
-//     echo "<script>
-//     alert('Proses Perhitungan Berhasil');
-//     </script>";
-// }
 
 ?>
 
@@ -343,51 +308,11 @@ if (isset($_POST['save_report'])) {
                                                         <?php endforeach; ?>
                                                     </tbody>
                                                 </table>
-                                                <form action="" method="POST">
-                                                    <button type="submit" name="save_report" class="btn btn-primary btn-sm">Simpan Hasil</button>
-                                                </form>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             <?php endif; ?>
-                            <!-- <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h4 class="card-title">Laporan Hasil Perhitungan </h4>
-                                        <h6 class="card-subtitle">Data Laporan</h6>
-                                        <div class="table-responsive">
-                                            <table class="table color-table red-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID Laporan</th>
-                                                        <th>Nama User</th>
-                                                        <th>Role</th>
-                                                        <th>Date</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    $reports = query("SELECT laporan.id, users.nama, users.role, laporan.tanggal_laporan FROM laporan JOIN users ON laporan.user_id = users.id");
-                                                    foreach ($reports as $report) :
-                                                    ?>
-                                                        <tr>
-                                                            <td><?= $report['id'] ?></td>
-                                                            <td><a href="view_report.php?id=<?= $report['id'] ?>"><?= $report['nama'] ?></a></td>
-                                                            <td>
-                                                                <div class="label label-table label-success"><?= $report['role'] ?></div>
-                                                            </td>
-                                                            <td><span class="text-muted"><i class="fa fa-clock-o"></i> <?= $report['tanggal_laporan'] ?></span></td>
-                                                            <td><a href="view_report.php?id=<?= $report['id'] ?>" class="btn btn-primary btn-sm">Lihat Laporan</a></td>
-                                                        </tr>
-                                                    <?php endforeach; ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> -->
                         </div> <!-- /.row -->
                     </div><!-- /.container-fluid -->
                 </div>

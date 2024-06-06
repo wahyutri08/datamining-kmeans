@@ -12,17 +12,33 @@ if ($_SESSION['role'] !== 'Admin') {
 }
 // require_once '../functions.php';
 
-if (isset($_POST["submit"])) {
-    if (register($_POST) > 0) {
-        echo "
-        <script>
-        alert('User Berhasil Ditambahkan');
-        document.location.href = '../users'
-        </script>";
+// if (isset($_POST["submit"])) {
+//     if (register($_POST) > 0) {
+//         echo "
+//         <script>
+//         alert('User Berhasil Ditambahkan');
+//         document.location.href = '../users'
+//         </script>";
+//     } else {
+//         echo mysqli_error($db);
+//     }
+// }
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $result = register($_POST);
+    if ($result > 0) {
+        echo json_encode(["status" => "success", "message" => "Data Berhasil Ditambahkan"]);
+    } elseif ($result == -1) {
+        echo json_encode(["status" => "error", "message" => "Username Sudah Ada"]);
+    } elseif ($result == -2) {
+        echo json_encode(["status" => "error", "message" => "Konfirmasi Password Tidak Sesuai"]);
+    } elseif ($result == -3) {
+        echo json_encode(["status" => "error", "message" => "Your File Not Image"]);
     } else {
-        echo mysqli_error($db);
+        echo json_encode(["status" => "error", "message" => "Data Gagal Diubah"]);
     }
+    exit;
 }
+
 
 ?>
 
@@ -107,7 +123,7 @@ if (isset($_POST["submit"])) {
                             <div class="card-body">
                                 <h4 class="card-title">Tambah Akun</h4>
                                 <h6 class="card-subtitle">Register</h6>
-                                <form class="form-horizontal p-t-20" method="POST" action="" enctype="multipart/form-data">
+                                <form class="form-horizontal p-t-20" method="POST" action="" enctype="multipart/form-data" id="myForm">
                                     <div class="form-group row">
                                         <label for="username" class="col-sm-3 control-label">Username<span class="text-danger">*</span></label>
                                         <div class="col-sm-9">
@@ -220,68 +236,40 @@ if (isset($_POST["submit"])) {
     <script src="../assets/node_modules/sparkline/jquery.sparkline.min.js"></script>
     <!--Custom JavaScript -->
     <script src="../assets/dist/js/custom.min.js"></script>
-    <!-- jQuery file upload -->
-    <script src="../assets/node_modules/dropify/dist/js/dropify.min.js"></script>
-    <!-- <script>
-        // $(document).ready(function() {
-        //     // Basic
-        //     $('.dropify').dropify();
+    <!-- Sweet-Alert  -->
+    <script src="../assets/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#myForm').on('submit', function(e) {
+                e.preventDefault();
 
-        //     // Translated
-        //     $('.dropify-fr').dropify({
-        //         messages: {
-        //             default: 'Glissez-déposez un fichier ici ou cliquez',
-        //             replace: 'Glissez-déposez un fichier ou cliquez pour remplacer',
-        //             remove: 'Supprimer',
-        //             error: 'Désolé, le fichier trop volumineux'
-        //         }
-        //     });
-
-        //     // Used events
-        //     var drEvent = $('#input-file-events').dropify();
-
-        //     drEvent.on('dropify.beforeClear', function(event, element) {
-        //         return confirm("Do you really want to delete \"" + element.file.name + "\" ?");
-        //     });
-
-        //     drEvent.on('dropify.afterClear', function(event, element) {
-        //         alert('File deleted');
-        //     });
-
-        //     drEvent.on('dropify.errors', function(event, element) {
-        //         console.log('Has Errors');
-        //     });
-
-        //     var drDestroy = $('#input-file-to-destroy').dropify();
-        //     drDestroy = drDestroy.data('dropify')
-        //     $('#toggleDropify').on('click', function(e) {
-        //         e.preventDefault();
-        //         if (drDestroy.isDropified()) {
-        //             drDestroy.destroy();
-        //         } else {
-        //             drDestroy.init();
-        //         }
-        //     })
-        // });
-        
-    </script> -->
-    <!-- <script>
-        // Setelah halaman dimuat
-        document.addEventListener('DOMContentLoaded', function() {
-            // Ambil elemen input file
-            var avatarInput = document.getElementById('avatar');
-            // Tentukan URL gambar default
-            var defaultImageUrl = '../assets/images/users/1.jpg'; // Ganti dengan URL gambar default yang sesuai
-
-            // Set nilai default pada input file
-            avatarInput.addEventListener('change', function() {
-                // Jika pengguna tidak memilih file, tetapkan nilai default
-                if (!avatarInput.value) {
-                    avatarInput.value = defaultImageUrl;
-                }
+                $.ajax({
+                    url: '',
+                    type: 'POST',
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        const res = JSON.parse(response);
+                        if (res.status === 'success') {
+                            Swal.fire({
+                                title: 'Success',
+                                text: res.message,
+                                type: 'success'
+                            }).then(() => {
+                                window.location.href = '../users';
+                            });
+                        } else {
+                            Swal.fire('Error', res.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                    }
+                });
             });
         });
-    </script> -->
+    </script>
 </body>
 
 </html>

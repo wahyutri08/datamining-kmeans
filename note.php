@@ -269,4 +269,44 @@ if (isset($_POST['save_report'])) {
     }
 }
 
+
+// if (isset($_POST["submit"])) {
+//     // Ambil nilai yang dikirimkan untuk username baru
+//     $newUsername = $_POST["username"];
+
+//     // Lakukan pemeriksaan dengan database
+//     $query = "SELECT username FROM users WHERE username = '$newUsername'";
+//     $result = mysqli_query($db, $query);
+
+//     // Jika username yang dikirim sudah ada di database selain username saat ini, tampilkan pesan kesalahan
+//     if (mysqli_num_rows($result) > 0 && $newUsername !== $users["username"]) {
+//         echo "
+//         <script>
+//         alert('Username sudah ada. Silakan pilih username lain.');
+//         </script>";
+//     } else {
+//         // Lanjutkan dengan pembaruan data jika tidak ada masalah
+//         if (editUsers($_POST) > 0) {
+
+//             // Update session data dengan data baru
+//             $_SESSION['user_data']['username'] = $_POST['username'];
+//             $_SESSION['user_data']['nama'] = $_POST['nama'];
+//             $_SESSION['user_data']['email'] = $_POST['email'];
+//             $_SESSION['user_data']['role'] = $_POST['role'];
+
+//             echo "
+//             <script>
+//             alert('Data Berhasil Diubah');
+//             document.location.href = '../users'
+//             </script>";
+//         } else {
+//             echo "
+//             <script>
+//             alert('Data Gagal Diubah');
+//             document.location.href = '../users';
+//             </script>";
+//         }
+//     }
+// }
+
 ?>

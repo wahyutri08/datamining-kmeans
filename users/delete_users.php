@@ -9,20 +9,12 @@ if ($_SESSION['role'] !== 'Admin') {
     header("Location: ../dashboard");
     exit;
 }
-// require '../functions.php';
+
 $id = $_GET["id"];
 
 if (deleteUsers($id) > 0) {
-    echo "
-    <script> 
-        alert('Data Berhasil Dihapus');
-        document.location.href = '../users';
-    </script>
-    ";
+    echo json_encode(['status' => 'success']);
 } else {
-    echo "<script> 
-    alert('Data Gagal Dihapus');
-    document.location.href = '../users';
-</script>
-";
+    echo json_encode(['status' => 'error']);
 }
+exit;

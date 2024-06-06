@@ -11,15 +11,17 @@ $id_cluster = $_GET["id_cluster"];
 $cluster = query("SELECT * FROM cluster WHERE id_cluster = $id_cluster")[0];
 $atribut = query("SELECT * FROM atribut");
 
-if (isset($_POST["submit"])) {
-    dataPostCluster($_POST, $_GET);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Pengecekan apakah ada data yang diinput
+    if (empty($_POST)) {
+        echo json_encode(["status" => "error", "message" => "Tidak ada data yang diinput"]);
+        exit;
+    }
 
-    echo "
-    <script>
-    alert('Data Berhasil Diubah');
-    document.location.href = '../nilai_cluster';
-    </script>
-    ";
+    // Memanggil fungsi jika ada data yang diinput
+    dataPostCluster($_POST, $_GET);
+    echo json_encode(["status" => "success", "message" => "Data Berhasil Diubah"]);
+    exit;
 }
 
 ?>
@@ -106,7 +108,7 @@ if (isset($_POST["submit"])) {
                             <div class="card-body">
                                 <h4 class="card-title">Edit Nilai Cluster</h4>
                                 <h6 class="card-subtitle"><?= $cluster["nama_cluster"]; ?></h6>
-                                <form class="form-horizontal p-t-20" method="POST" action="" enctype="multipart/form-data">
+                                <form class="form-horizontal p-t-20" method="POST" action="" enctype="multipart/form-data" id="myForm">
                                     <input type="hidden" name="id_cluster" value="<?= $cluster["id_cluster"]; ?>">
                                     <?php foreach ($atribut as $row) : ?>
                                         <div class="form-group row">
@@ -175,6 +177,44 @@ if (isset($_POST["submit"])) {
     <script src="../assets/dist/js/custom.min.js"></script>
     <!-- jQuery file upload -->
     <script src="../assets/node_modules/dropify/dist/js/dropify.min.js"></script>
+    <!-- Sweet-Alert  -->
+    <script src="../assets/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#myForm').on('submit', function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: '',
+                    type: 'POST',
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        const res = JSON.parse(response);
+                        if (res.status === 'success') {
+                            Swal.fire({
+                                title: 'Success',
+                                text: res.message,
+                                type: 'success'
+                            }).then(() => {
+                                window.location.href = '../nilai_cluster';
+                            });
+                        } else {
+                            if (res.message === 'Tidak ada data yang diinput') {
+                                Swal.fire('Error', res.message, 'error');
+                            } else {
+                                Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                            }
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

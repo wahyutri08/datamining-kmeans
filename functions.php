@@ -36,23 +36,19 @@ function register($data)
     //  Upload Gambar
     $avatar = upload();
     if (!$avatar) {
-        return false;
+        return -3;
     }
 
     $result = mysqli_query($db, "SELECT * FROM users WHERE username = '$username'");
 
     if (mysqli_fetch_assoc($result)) {
-        echo "<script>
-            alert('Username Already In Use');
-            </script>";
-        return false;
+        // Jika Nama Username Sudah Ada
+        return -1;
     }
 
     if ($password !== $password2) {
-        echo "<script>
-        alert('Password Tidak Sesuai');
-        </script>";
-        return false;
+        // Password 1 tidak sesuai dengan password 2
+        return -2;
     }
 
     $password = password_hash($password, PASSWORD_DEFAULT);
@@ -74,14 +70,13 @@ function upload()
     $ekstensiAvatar = explode('.', $namaFile);
     $ekstensiAvatar = strtolower(end($ekstensiAvatar));
     if (!in_array($ekstensiAvatar, $ekstensiAvatarValid)) {
-        echo "<script>
-                alert('Your File Not Image')
-              </script>";
+        // Jika Avatar Bukan Gambar
         return false;
     }
 
+
     // Cek jika ukuran terlalu besar
-    if ($ukuranFiles > 2000000) {
+    if ($ukuranFiles > 9000000) {
         echo "<script>
         alert('Ukuran Gambar Terlalu Besar')
       </script>";
@@ -164,6 +159,12 @@ function editUsers($data)
         $avatar = $avatarLama;
     } else {
         $avatar = upload();
+    }
+
+    //  Upload Gambar
+    $avatarLama = upload();
+    if (!$avatarLama) {
+        return -3;
     }
 
     $password = password_hash($password, PASSWORD_DEFAULT);
@@ -336,13 +337,12 @@ function editCluster($data)
     $id_cluster = ($data["id_cluster"]);
     $nama_cluster = htmlspecialchars($data["nama_cluster"]);
 
-    $result = mysqli_query($db, "SELECT * FROM cluster WHERE nama_cluster = '$nama_cluster'");
+    // Periksa apakah nama atribut sudah ada, tetapi abaikan baris yang sedang diedit
+    $query = "SELECT * FROM cluster WHERE nama_cluster = '$nama_cluster' AND id_cluster != $id_cluster";
+    $result = mysqli_query($db, $query);
 
     if (mysqli_fetch_assoc($result)) {
-        echo "<script>
-            alert('Nama Cluster Tidak Boleh Sama');
-            </script>";
-        return false;
+        return -1;
     }
 
     $query = "UPDATE cluster SET 
@@ -488,6 +488,14 @@ function searchKelurahan($keyword)
 }
 
 function searchNilaiKelurahan($keyword)
+{
+    $query = "SELECT * FROM kelurahan WHERE
+                nama_kelurahan LIKE '%$keyword%'
+             ";
+    return query($query);
+}
+
+function searchNilaiCluster($keyword)
 {
     $query = "SELECT * FROM kelurahan WHERE
                 nama_kelurahan LIKE '%$keyword%'
@@ -674,7 +682,7 @@ function simpanhasilakhir($centroids, $clusters, $history, $id_user, $dateReport
 
                         $query = "INSERT INTO laporan_hasil_akhir_atribut (id_laporan_hasil_akhir, nama_atribut, nilai) VALUES ('$id_laporan_hasil_akhir', '$nama_atribut', '$nilai')";
                         if (!mysqli_query($db, $query)) {
-                            var_dump($db);
+                            echo "Error inserting into laporan_hasil_akhir_atribut: " . mysqli_error($db) . "<br>";
                             exit;
                         }
                     }
@@ -684,7 +692,7 @@ function simpanhasilakhir($centroids, $clusters, $history, $id_user, $dateReport
             }
         }
 
-        echo "Data berhasil disimpan dengan ID laporan: " . $id_laporan . "<br>";
+        // echo "Data berhasil disimpan dengan ID laporan: " . $id_laporan . "<br>";
     } else {
         echo "Error: " . mysqli_error($db) . "<br>";
     }

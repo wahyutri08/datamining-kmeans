@@ -7,34 +7,34 @@ if (!isset($_SESSION["login"])) {
 }
 
 
-// Simpan hasil ke database
-if (isset($_POST['save_report'])) {
-    $userId = $_SESSION['id']; // Asumsikan user ID disimpan di session
-    $reportDate = date('Y-m-d H:i:s');
+// // Simpan hasil ke database
+// if (isset($_POST['save_report'])) {
+//     $userId = $_SESSION['id']; // Asumsikan user ID disimpan di session
+//     $reportDate = date('Y-m-d H:i:s');
 
-    // Simpan metadata laporan
-    $insertReport = "INSERT INTO laporan (user_id, tanggal_laporan) VALUES ($userId, '$reportDate')";
-    if (mysqli_query($db, $insertReport)) {
-        $reportId = mysqli_insert_id($db);
+//     // Simpan metadata laporan
+//     $insertReport = "INSERT INTO laporan (user_id, tanggal_laporan) VALUES ($userId, '$reportDate')";
+//     if (mysqli_query($db, $insertReport)) {
+//         $reportId = mysqli_insert_id($db);
 
-        // Simpan centroid awal
-        foreach ($initialCentroids as $index => $centroid) {
-            $values = implode(',', array_map('floatval', $centroid));
-            mysqli_query($db, "INSERT INTO report_initial_centroids (report_id, cluster_id, centroid_values) VALUES ($reportId, $index + 1, '$values')");
-        }
+//         // Simpan centroid awal
+//         foreach ($initialCentroids as $index => $centroid) {
+//             $values = implode(',', array_map('floatval', $centroid));
+//             mysqli_query($db, "INSERT INTO report_initial_centroids (report_id, cluster_id, centroid_values) VALUES ($reportId, $index + 1, '$values')");
+//         }
 
-        // Simpan riwayat clustering
-        foreach ($history as $iteration) {
-            $iterationNumber = $iteration['iteration'];
-            foreach ($iteration['centroids'] as $index => $centroid) {
-                $values = implode(',', array_map('floatval', $centroid));
-                mysqli_query($db, "INSERT INTO report_history (report_id, iteration, cluster_id, history_values) VALUES ($reportId, $iterationNumber, $index + 1, '$values')");
-            }
-        }
-    } else {
-        echo "Gagal menyimpan laporan: " . mysqli_error($db);
-    }
-}
+//         // Simpan riwayat clustering
+//         foreach ($history as $iteration) {
+//             $iterationNumber = $iteration['iteration'];
+//             foreach ($iteration['centroids'] as $index => $centroid) {
+//                 $values = implode(',', array_map('floatval', $centroid));
+//                 mysqli_query($db, "INSERT INTO report_history (report_id, iteration, cluster_id, history_values) VALUES ($reportId, $iterationNumber, $index + 1, '$values')");
+//             }
+//         }
+//     } else {
+//         echo "Gagal menyimpan laporan: " . mysqli_error($db);
+//     }
+// }
 
 
 ?>
@@ -84,40 +84,6 @@ if (isset($_POST['save_report'])) {
                 <div class="content">
                     <div class="container-fluid">
                         <div class="row">
-                            <!-- <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h4 class="card-title">Laporan Hasil Perhitungan </h4>
-                                        <h6 class="card-subtitle">Data Laporan</h6>
-                                        <div class="table-responsive">
-                                            <table class="table color-table red-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID Laporan</th>
-                                                        <th>Hasil Perhitungan</th>
-                                                        <th>Nama User</th>
-                                                        <th>Role</th>
-                                                        <th>Date</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>1</td>
-                                                        <td><a href="">Hasil Clustering</a></td>
-                                                        <td>Wahyu Tri Susanto</td>
-                                                        <td>
-                                                            <div class="label label-table label-success">Admin</div>
-                                                        </td>
-                                                        <td><span class="text-muted"><i class="fa fa-clock-o"></i> Oct 16, 2017</span> </td>
-                                                        <td><button class="btn btn-primary btn-sm">Hapus</button></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> -->
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-body">
