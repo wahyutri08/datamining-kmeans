@@ -10,7 +10,6 @@ if ($_SESSION['role'] !== 'Admin') {
     header("Location: ../dashboard");
     exit;
 }
-// require_once '../functions.php';
 
 $users = query("SELECT * FROM users");
 
@@ -97,14 +96,9 @@ $users = query("SELECT * FROM users");
                             <div class="col">
                                 <div class="card">
                                     <div class="card-body">
-                                        <!-- <a href="../add_users" class="btn waves-effect waves-light btn-rounded btn-info float-end"><i class="fas fa-user-plus"></i> Add User</a> -->
-                                        <!-- <button type="button" class="btn waves-effect waves-light btn-rounded btn-info float-end"><i class="fas fa-user-plus"></i> Add User</button> -->
                                         <h4 class="card-title">User Management</h4>
                                         <h6 class="card-subtitle">Data Users</h6>
                                         <a href="../add_users" class="btn waves-effect waves-light btn-rounded btn-info mb-2"><i class="fas fa-user-plus"></i> Add User</a>
-                                        <!-- <div class="float-end mb-3">
-                                            <button type="button" class="btn waves-effect waves-light btn-rounded btn-info"><i class="fas fa-user-plus"></i> Add User</button>
-                                        </div> -->
                                         <div class="table-responsive">
                                             <table class="table color-table red-table">
                                                 <thead>

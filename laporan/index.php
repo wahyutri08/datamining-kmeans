@@ -7,36 +7,6 @@ if (!isset($_SESSION["login"])) {
 }
 
 
-// // Simpan hasil ke database
-// if (isset($_POST['save_report'])) {
-//     $userId = $_SESSION['id']; // Asumsikan user ID disimpan di session
-//     $reportDate = date('Y-m-d H:i:s');
-
-//     // Simpan metadata laporan
-//     $insertReport = "INSERT INTO laporan (user_id, tanggal_laporan) VALUES ($userId, '$reportDate')";
-//     if (mysqli_query($db, $insertReport)) {
-//         $reportId = mysqli_insert_id($db);
-
-//         // Simpan centroid awal
-//         foreach ($initialCentroids as $index => $centroid) {
-//             $values = implode(',', array_map('floatval', $centroid));
-//             mysqli_query($db, "INSERT INTO report_initial_centroids (report_id, cluster_id, centroid_values) VALUES ($reportId, $index + 1, '$values')");
-//         }
-
-//         // Simpan riwayat clustering
-//         foreach ($history as $iteration) {
-//             $iterationNumber = $iteration['iteration'];
-//             foreach ($iteration['centroids'] as $index => $centroid) {
-//                 $values = implode(',', array_map('floatval', $centroid));
-//                 mysqli_query($db, "INSERT INTO report_history (report_id, iteration, cluster_id, history_values) VALUES ($reportId, $iterationNumber, $index + 1, '$values')");
-//             }
-//         }
-//     } else {
-//         echo "Gagal menyimpan laporan: " . mysqli_error($db);
-//     }
-// }
-
-
 ?>
 
 
@@ -90,27 +60,16 @@ if (!isset($_SESSION["login"])) {
                                         <h4 class="card-title">Laporan Hasil Perhitungan </h4>
                                         <h6 class="card-subtitle">Data Laporan</h6>
                                         <div class="table-responsive">
-                                            <table class="table color-table red-table">
+                                            <table class="table color-table info-table">
                                                 <thead>
                                                     <tr>
                                                         <th>ID Laporan</th>
                                                         <th>Nama User</th>
                                                         <th>Role</th>
                                                         <th>Date</th>
-                                                        <th>Action</th>
+                                                        <th></th>
                                                     </tr>
                                                 </thead>
-                                                <!-- <tbody>
-                                                    <tr>
-                                                        <td></td>
-                                                        <td><a href=""></a></td>
-                                                        <td>
-                                                            <div class="label label-table label-success"></div>
-                                                        </td>
-                                                        <td><span class="text-muted"><i class="fa fa-clock-o"></i></span> </td>
-                                                        <td><button class="btn btn-primary btn-sm"></button></td>
-                                                    </tr>
-                                                </tbody> -->
                                                 <tbody>
                                                     <?php
                                                     $reports = query("SELECT laporan.id, users.nama, users.role, laporan.tanggal_laporan FROM laporan JOIN users ON laporan.user_id = users.id");
@@ -118,7 +77,7 @@ if (!isset($_SESSION["login"])) {
                                                     ?>
                                                         <tr>
                                                             <td><?= $report['id'] ?></td>
-                                                            <td><a href="view_report.php?id=<?= $report['id'] ?>"><?= $report['nama'] ?></a></td>
+                                                            <td><?= $report["nama"]; ?></td>
                                                             <td>
                                                                 <?php
                                                                 if ($report['role'] == 'Admin') {
@@ -129,7 +88,18 @@ if (!isset($_SESSION["login"])) {
                                                                 ?>
                                                             </td>
                                                             <td><span class="text-muted"><i class="fa fa-clock-o"></i> <?= $report['tanggal_laporan'] ?></span></td>
-                                                            <td><a href="view_report.php?id=<?= $report['id'] ?>" class="btn btn-primary btn-sm">Lihat Laporan</a></td>
+                                                            <td>
+                                                                <div class="dropdown">
+                                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                        Action
+                                                                    </button>
+                                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                        <li><a class="dropdown-item" href="view_report.php?id=<?= $report["id"]; ?>">Lihat Detail</a></li>
+                                                                        <li><a class="dropdown-item" href="cetak.php?id=<?= $report["id"]; ?>" target="_blank">Cetak PDF</a></li>
+                                                                        <li><a class="dropdown-item tombol-hapus" href="delete_report.php?id=<?= $report["id"]; ?>">Delete</a></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </td>
                                                         </tr>
                                                     <?php endforeach; ?>
                                                 </tbody>
@@ -171,8 +141,117 @@ if (!isset($_SESSION["login"])) {
     <script src="../assets/node_modules/sticky-kit-master/dist/sticky-kit.min.js"></script>
     <script src="../assets/node_modules/sparkline/jquery.sparkline.min.js"></script>
     <script src="../assets/dist/js/custom.min.js"></script>
+    <!-- Sweet-Alert  -->
     <script src="../assets/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
-    <script src="../assets/node_modules/sweetalert2/sweet-alert.init.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.tombol-hapus').on('click', function(e) {
+                e.preventDefault();
+                const href = $(this).attr('href');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Data Akan Dihapus",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: href,
+                            type: 'GET',
+                            success: function(response) {
+                                let res = JSON.parse(response);
+                                if (res.status === 'success') {
+                                    Swal.fire({
+                                        title: 'Deleted!',
+                                        text: 'Data Berhasil Dihapus',
+                                        type: 'success',
+                                        showConfirmButton: true,
+                                    }).then(() => {
+                                        window.location.href = '../laporan';
+                                    });
+                                } else if (res.status === 'error') {
+                                    Swal.fire('Error', 'Data Gagal Dihapus', 'error');
+                                } else if (res.status === 'redirect') {
+                                    window.location.href = '../login';
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Fungsi untuk menangani kueri pencarian
+            function handleSearchQuery() {
+                var keyword = $('#keyword').val();
+                $.get('../ajax/data_atribut.php?keyword=' + keyword, function(data) {
+                    $('.table-responsive').html(data);
+                    // Initialize ulang tombol-hapus setelah memuat data baru
+                    $('.tombol-hapus').on('click', function(e) {
+                        e.preventDefault();
+                        const href = $(this).attr('href');
+
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "Data Akan Dihapus",
+                            type: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            if (result.value) {
+                                $.ajax({
+                                    url: href,
+                                    type: 'GET',
+                                    success: function(response) {
+                                        let res = JSON.parse(response);
+                                        if (res.status === 'success') {
+                                            Swal.fire({
+                                                title: 'Deleted!',
+                                                text: 'Data Berhasil Dihapus',
+                                                type: 'success',
+                                                showConfirmButton: true
+                                            }).then(() => {
+                                                window.location.href = '../laporan';
+                                            });
+                                        } else if (res.status === 'error') {
+                                            Swal.fire('Error', 'Data Gagal Dihapus', 'error');
+                                        } else if (res.status === 'redirect') {
+                                            window.location.href = '../login';
+                                        }
+                                    },
+                                    error: function() {
+                                        Swal.fire('Error', 'Terjadi kesalahan pada server', 'error');
+                                    }
+                                });
+                            }
+                        });
+                    });
+                });
+            }
+
+            // Sembunyikan tombol cari saat halaman dimuat
+            $('#tombol-cari').hide();
+
+            // Event ketika tombol cari ditekan
+            $('#tombol-cari').on('click', function(e) {
+                e.preventDefault();
+                handleSearchQuery();
+            });
+
+            // Event ketika mengetik di kolom pencarian
+            $('#keyword').on('keyup', function() {
+                handleSearchQuery();
+            });
+        });
+    </script>
 </body>
 
 </html>

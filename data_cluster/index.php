@@ -96,14 +96,24 @@ if (isset($_POST["search"])) {
                                 <div class="card">
                                     <div class="card-body">
                                         <h4 class="card-title">Data Cluster</h4>
-                                        <form action="" method="POST">
-                                            <div id="example23_filter" class="dataTables_filter">
-                                                <label>Search :<input type="text" name="keyword" id="keyword" class="form-control-sm mb-4" placeholder="Keyword" aria-controls="example23"></label>
-                                                <button type="submit" name="search" id="tombol-cari">Cari!</button>
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div class="d-flex">
+                                                <div class="float-start mb-3 me-2">
+                                                    <a href="cetak.php" class="btn btn-secondary btn-rounded btn-danger"><i class="fas fa-file-pdf"></i> Cetak PDF</a>
+                                                </div>
+                                                <div class="float-start">
+                                                    <a href="add_cluster.php" class="btn btn-secondary btn-rounded btn-info"><i class="fa fa-plus"></i> Tambah</a>
+                                                </div>
                                             </div>
-                                        </form>
-                                        <div class="float-start">
-                                            <a href="cetak.php" class="btn waves-effect waves-light btn-rounded btn-outline-danger"><i class="far fa-file-pdf"></i> Cetak PDF</a>
+                                            <form class="form-horizontal" action="" method="POST">
+                                                <div class="form-group mb-0">
+                                                    <div class="d-flex justify-content-end">
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Search">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
                                         <!-- <h6 class="card-subtitle">Add class <code>.color-bordered-table .red-bordered-table</code></h6> -->
                                         <div class="table-responsive">

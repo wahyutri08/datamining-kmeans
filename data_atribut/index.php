@@ -35,6 +35,31 @@ if (isset($_POST["search"])) {
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
+    <!-- <style>
+        .container {
+            display: flex;
+            gap: 2rem;
+            /* Default gap */
+            justify-content: flex-start;
+        }
+
+        .float-start {
+            display: inline-block;
+        }
+
+        /* Media query for mobile devices */
+        @media (max-width: 600px) {
+            .container {
+                flex-direction: column;
+                gap: 0.5rem;
+                /* Gap for mobile devices */
+            }
+
+            .float-start {
+                margin-bottom: 1rem;
+            }
+        }
+    </style> -->
 </head>
 
 <body class="skin-red-dark fixed-layout">
@@ -80,7 +105,7 @@ if (isset($_POST["search"])) {
                                 <li class="breadcrumb-item">Master data</li>
                                 <li class="breadcrumb-item active">Data Atribut</li>
                             </ol>
-                            <a href="add_atribut.php"><button type="button" class="btn btn-info d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Tambah Atribut</button></a>
+                            <!-- <a href="add_atribut.php"><button type="button" class="btn btn-info d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Tambah Atribut</button></a> -->
                         </div>
                     </div>
                 </div>
@@ -97,14 +122,24 @@ if (isset($_POST["search"])) {
                                 <div class="card">
                                     <div class="card-body">
                                         <h4 class="card-title">Data Atribut</h4>
-                                        <form action="" method="POST">
-                                            <div id="example23_filter" class="dataTables_filter">
-                                                <label>Search :<input type="text" name="keyword" id="keyword" class="form-control-sm mb-4" placeholder="Keyword" aria-controls="example23"></label>
-                                                <button type="submit" name="search" id="tombol-cari">Cari!</button>
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div class="d-flex">
+                                                <div class="float-start mb-3 me-2">
+                                                    <a href="cetak.php" class="btn btn-secondary btn-rounded btn-danger"><i class="fas fa-file-pdf"></i> Cetak PDF</a>
+                                                </div>
+                                                <div class="float-start">
+                                                    <a href="add_atribut.php" class="btn btn-secondary btn-rounded btn-info"><i class="fa fa-plus"></i> Tambah</a>
+                                                </div>
                                             </div>
-                                        </form>
-                                        <div class="float-start">
-                                            <a href="cetak.php" class="btn waves-effect waves-light btn-rounded btn-outline-danger"><i class="far fa-file-pdf"></i> Cetak PDF</a>
+                                            <form class="form-horizontal" action="" method="POST">
+                                                <div class="form-group mb-0">
+                                                    <div class="d-flex justify-content-end">
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Search">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
                                         <!-- <h6 class="card-subtitle">Add class <code>.color-bordered-table .red-bordered-table</code></h6> -->
                                         <div class="table-responsive">

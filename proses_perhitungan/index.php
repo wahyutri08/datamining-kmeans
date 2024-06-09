@@ -63,12 +63,14 @@ $result = kmeans($data, $initialCentroids, $maxIterations);
 $centroids = $result['centroids'];
 $clusters = $result['clusters'];
 $history = $result['history'];
+$actualIterations = $result['iteration'];
 
 // Mengatur zona waktu
 date_default_timezone_set('Asia/Jakarta');
 if (isset($_POST['iterasi'])) {
-    simpanhasilakhir($centroids, $clusters, $history, $_SESSION['id'], date('Y-m-d H:i:s'), $kelurahan, $data, $atribut);
+    simpanhasilakhir($centroids, $clusters, $history, $_SESSION['id'], date('Y-m-d H:i:s'), $kelurahan, $data, $atribut, $actualIterations);
 }
+
 
 ?>
 

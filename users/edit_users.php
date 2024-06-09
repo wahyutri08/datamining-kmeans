@@ -38,28 +38,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // $_SESSION['user_data']['avatar'] = $_POST['avatar'];
 
             echo json_encode(["status" => "success", "message" => "Data Berhasil Diubah"]);
-        } elseif ($result == -3) {
-            echo json_encode(["status" => "error", "message" => "Your File Not Image"]);
+        } elseif ($result == -1) {
+            echo json_encode(["status" => "error", "message" => "Format File Bukan Gambar"]);
+        } elseif ($result == -2) {
+            echo json_encode(["status" => "error", "message" => "Ukuran Gambar Terlalu Besar"]);
         } else {
             echo json_encode(["status" => "error", "message" => "Data Gagal Diubah"]);
         }
     }
     exit;
 }
-
-// if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//     $result = editAtribut($_POST);
-//     if ($result > 0) {
-//         echo json_encode(["status" => "success", "message" => "Data Berhasil Diubah"]);
-//     } elseif ($result == -1) {
-//         echo json_encode(["status" => "error", "message" => "Nama Atribut Sudah Ada Sebelumnya"]);
-//     } else {
-//         echo json_encode(["status" => "error", "message" => "Data Gagal Diubah"]);
-//     }
-//     exit;
-// }
-
-
 
 ?>
 

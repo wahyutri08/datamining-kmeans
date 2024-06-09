@@ -9,7 +9,15 @@ if (!isset($_SESSION["login"])) {
 $id_laporan = $_GET['id'];
 
 // Ambil Data Lpaoran
-$laporan = query("SELECT laporan.id, users.nama, users.role, laporan.tanggal_laporan FROM laporan JOIN users ON laporan.user_id = users.id WHERE laporan.id = $id_laporan");
+$laporan = query("SELECT 
+                laporan.id, 
+                users.nama, 
+                users.role, 
+                laporan.tanggal_laporan,
+                laporan.jumlah_iterasi 
+                FROM laporan 
+                JOIN users 
+                ON laporan.user_id = users.id WHERE laporan.id = $id_laporan");
 if (empty($laporan)) {
     die("Laporan tidak ditemukan.");
 }
@@ -39,7 +47,7 @@ $hasil_akhir = query("SELECT
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon.png">
-    <title>Laporan Hasil Proses Perhitungan - Data Mining</title>
+    <title>Detail Hasil Proses Perhitungan - Data Mining</title>
     <link href="../assets/dist/css/style.min.css" rel="stylesheet">
     <link href="../assets/node_modules/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" />
 </head>
@@ -58,14 +66,14 @@ $hasil_akhir = query("SELECT
             <div class="container-fluid">
                 <div class="row page-titles">
                     <div class="col-md-5 align-self-center">
-                        <h4 class="text-themecolor">Laporan Hasil Perhitungan</h4>
+                        <h4 class="text-themecolor">Detail Hasil Perhitungan</h4>
                     </div>
                     <div class="col-md-7 align-self-center text-end">
                         <div class="d-flex justify-content-end align-items-center">
                             <ol class="breadcrumb justify-content-end">
                                 <li class="breadcrumb-item"><a href="../dashboard">Home</a></li>
                                 <li class="breadcrumb-item">Laporan Hasil Perhitungan</li>
-                                <li class="breadcrumb-item active">Laporan</li>
+                                <li class="breadcrumb-item active">Detail Laporan</li>
                             </ol>
                         </div>
                     </div>
@@ -80,6 +88,7 @@ $hasil_akhir = query("SELECT
                                         <p class="card-subtitle">ID Laporan : <?= $id_laporan ?></p>
                                         <p class="card-subtitle">Nama User : <?= $laporan[0]['nama'] ?></p>
                                         <p class="card-subtitle">Role : <?= $laporan[0]['role'] ?></p>
+                                        <p class="card-subtitle">Jumlah Proses Iterasi : <?= $laporan[0]['jumlah_iterasi'] ?></p>
                                         <p class="card-subtitle">Tanggal Laporan : <?= $laporan[0]['tanggal_laporan'] ?></p>
                                         <div class="table-responsive">
                                             <table class="table table-bordered">

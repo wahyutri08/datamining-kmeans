@@ -71,16 +71,12 @@ function upload()
     $ekstensiAvatar = strtolower(end($ekstensiAvatar));
     if (!in_array($ekstensiAvatar, $ekstensiAvatarValid)) {
         // Jika Avatar Bukan Gambar
-        return false;
+        return -1;
     }
 
-
-    // Cek jika ukuran terlalu besar
-    if ($ukuranFiles > 9000000) {
-        echo "<script>
-        alert('Ukuran Gambar Terlalu Besar')
-      </script>";
-        return false;
+    if ($ukuranFiles > 10000000) {
+        // Cek jika ukuran terlalu besar
+        return -2;
     }
 
     // Gambar Siap Upload
@@ -93,6 +89,25 @@ function upload()
     move_uploaded_file($tmpName, '../assets/images/users/' . $namaFileBaru);
 
     return $namaFileBaru;
+}
+
+function ubahPassword($data)
+{
+    global $db;
+    $id = ($data["id"]);
+    $password = mysqli_real_escape_string($db, $data["password"]);
+    $password2 = mysqli_real_escape_string($db, $data["password2"]);
+
+    if ($password !== $password2) {
+        return -1;
+    }
+
+    $password = password_hash($password, PASSWORD_DEFAULT);
+    $query = "UPDATE users SET 
+    password = '$password' WHERE id = $id";
+    mysqli_query($db, $query);
+
+    return mysqli_affected_rows($db);
 }
 
 function editProfile($data)
@@ -108,35 +123,19 @@ function editProfile($data)
         $avatar = $avatarLama;
     } else {
         $avatar = upload();
+        if ($avatar === -1) {
+            // Kesalahan Jika Bukan Gambar
+            return -1;
+        } elseif ($avatar === -2) {
+            // Kesalahan Jika Ukuran Terlalu Besar
+            return -2;
+        }
     }
 
     $query = "UPDATE users SET 
         nama = '$nama',  
         email = '$email',
         avatar = '$avatar' WHERE id = $id";
-    mysqli_query($db, $query);
-
-    return mysqli_affected_rows($db);
-}
-
-function ubahPassword($data)
-{
-    global $db;
-    $id = ($data["id"]);
-    $password = mysqli_real_escape_string($db, $data["password"]);
-    $password2 = mysqli_real_escape_string($db, $data["password2"]);
-
-    if ($password !== $password2) {
-        echo "
-        <script>
-        alert('Password Tidak Sesuai');
-        </script>";
-        return false;
-    }
-
-    $password = password_hash($password, PASSWORD_DEFAULT);
-    $query = "UPDATE users SET 
-    password = '$password' WHERE id = $id";
     mysqli_query($db, $query);
 
     return mysqli_affected_rows($db);
@@ -159,12 +158,13 @@ function editUsers($data)
         $avatar = $avatarLama;
     } else {
         $avatar = upload();
-    }
-
-    //  Upload Gambar
-    $avatarLama = upload();
-    if (!$avatarLama) {
-        return -3;
+        if ($avatar === -1) {
+            // Kesalahan Jika Bukan Gambar
+            return -1;
+        } elseif ($avatar === -2) {
+            // Kesalahan Ukuran Terlalu Besar
+            return -2;
+        }
     }
 
     $password = password_hash($password, PASSWORD_DEFAULT);
@@ -627,6 +627,7 @@ function kmeans($data, $initialCentroids, $maxIterations)
         'centroids' => $centroids,
         'clusters' => $clusters,
         'history' => $history,
+        'iteration' => $i + 1,
     ];
 }
 
@@ -656,12 +657,12 @@ function getInitialClusters($data, $initialCentroids)
 }
 
 
-function simpanhasilakhir($centroids, $clusters, $history, $id_user, $dateReport, $kelurahan, $data, $atribut)
+function simpanhasilakhir($centroids, $clusters, $history, $id_user, $dateReport, $kelurahan, $data, $atribut, $actualIterations)
 {
     global $db;
 
     // Masukkan data ke tabel laporan
-    $query = "INSERT INTO laporan (user_id, tanggal_laporan) VALUES ('$id_user', '$dateReport')";
+    $query = "INSERT INTO laporan (user_id, tanggal_laporan, jumlah_iterasi) VALUES ('$id_user', '$dateReport', '$actualIterations')";
     if (mysqli_query($db, $query)) {
         $id_laporan = mysqli_insert_id($db);
 
@@ -696,4 +697,11 @@ function simpanhasilakhir($centroids, $clusters, $history, $id_user, $dateReport
     } else {
         echo "Error: " . mysqli_error($db) . "<br>";
     }
+}
+
+function deleteReport($id)
+{
+    global $db;
+    mysqli_query($db, "DELETE FROM laporan WHERE id = $id");
+    return mysqli_affected_rows($db);
 }
