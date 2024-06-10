@@ -5,8 +5,13 @@ if (!isset($_SESSION["login"])) {
     header("Location:../login");
     exit;
 }
-// require_once '../functions.php';
-$cluster = query("SELECT * FROM cluster");
+$jumlahDataPerHalaman = 10;
+$jumlahData = count(query("SELECT * FROM cluster"));
+$jumlahHalaman = ceil($jumlahData / $jumlahDataPerHalaman);
+$halamanAktif = (isset($_GET["page"])) ? $_GET["page"] : 1;
+$awalData = ($jumlahDataPerHalaman * $halamanAktif) - $jumlahDataPerHalaman;
+
+$cluster = query("SELECT * FROM cluster LIMIT $awalData, $jumlahDataPerHalaman");
 $atribut = query("SELECT * FROM atribut");
 ?>
 
@@ -77,7 +82,6 @@ $atribut = query("SELECT * FROM atribut");
                                 <li class="breadcrumb-item">Nilai data</li>
                                 <li class="breadcrumb-item active">Data Nilai Cluster</li>
                             </ol>
-                            <!-- <a href="add_kelurahan.php"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Tambah Kelurahan</button></a> -->
                         </div>
                     </div>
                 </div>
@@ -94,13 +98,22 @@ $atribut = query("SELECT * FROM atribut");
                                 <div class="card">
                                     <div class="card-body">
                                         <h4 class="card-title">Data Nilai Cluster</h4>
-                                        <form class="" action="" method="POST">
-                                            <div id="example23_filter" class="dataTables_filter">
-                                                <label>Search:<input type="text" name="keyword" id="keyword" class="form-control-sm mb-4" placeholder="Keyword" aria-controls="example23"></label>
-                                                <button type="submit" name="search" id="tombol-cari">Cari!</button>
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div class="d-flex">
+                                                <div class="float-start mb-3 me-2">
+                                                    <a href="cetak.php" class="btn btn-secondary btn-rounded btn-danger"><i class="fas fa-file-pdf"></i> Cetak PDF</a>
+                                                </div>
                                             </div>
-                                        </form>
-                                        <a href="cetak.php" target="_blank"><button type="button" class="btn waves-effect waves-light btn-rounded btn-outline-danger"><i class="far fa-file-pdf"></i> Cetak PDF</button></a>
+                                            <form class="form-horizontal" action="" method="POST">
+                                                <div class="form-group mb-0">
+                                                    <div class="d-flex justify-content-end">
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Search">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
                                         <!-- <h6 class="card-subtitle">Add class <code>.color-bordered-table .red-bordered-table</code></h6> -->
                                         <div class="table-responsive">
                                             <table class="table color-table red-table">
@@ -153,6 +166,27 @@ $atribut = query("SELECT * FROM atribut");
                                                     <?php endforeach; ?>
                                                 </tbody>
                                             </table>
+                                            <nav aria-label="Page navigation example" id="pagination-container">
+                                                <ul class="pagination justify-content-end">
+                                                    <li class="page-item"><a class="page-link" href="?page=<?= max(1, $halamanAktif - 1); ?>">Previous</a></li>
+                                                    <?php
+                                                    // Batasi jumlah maksimum item navigasi menjadi 5
+                                                    $jumlahTampil = min(5, $jumlahHalaman);
+                                                    // Hitung titik awal iterasi untuk tetap berada di tengah
+                                                    $start = max(1, min($halamanAktif - floor($jumlahTampil / 2), $jumlahHalaman - $jumlahTampil + 1));
+                                                    // Hitung titik akhir iterasi
+                                                    $end = min($start + $jumlahTampil - 1, $jumlahHalaman);
+
+                                                    for ($i = $start; $i <= $end; $i++) :
+                                                        if ($i == $halamanAktif) : ?>
+                                                            <li class="page-item active"><a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a></li>
+                                                        <?php else : ?>
+                                                            <li class="page-item"><a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a></li>
+                                                    <?php endif;
+                                                    endfor; ?>
+                                                    <li class="page-item"><a class="page-link" href="?page=<?= min($jumlahHalaman, $halamanAktif + 1); ?>">Next</a></li>
+                                                </ul>
+                                            </nav>
                                         </div>
                                     </div>
                                 </div>

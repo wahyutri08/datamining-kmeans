@@ -5,7 +5,6 @@ if (!isset($_SESSION["login"])) {
     header("Location:../login");
     exit;
 }
-// require_once '../functions.php';
 
 $jumlahDataPerHalaman = 10;
 $jumlahData = count(query("SELECT * FROM kelurahan"));
@@ -87,7 +86,6 @@ if (isset($_POST["search"])) {
                                 <li class="breadcrumb-item">Master data</li>
                                 <li class="breadcrumb-item active">Data Kelurahan</li>
                             </ol>
-                            <a href="add_kelurahan.php"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Tambah Kelurahan</button></a>
                         </div>
                     </div>
                 </div>

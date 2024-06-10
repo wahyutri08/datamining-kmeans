@@ -24,7 +24,7 @@ foreach ($kelurahan as $kel) {
         if ($nilai) {
             $row[] = $nilai[0]['nilai'];
         } else {
-            $row[] = 0; // Handle missing values appropriately
+            $row[] = 0;
         }
     }
     $data[] = $row;
@@ -39,7 +39,7 @@ foreach ($cluster as $cls) {
         if ($nilai) {
             $row[] = $nilai[0]['nilai'];
         } else {
-            $row[] = 0; // Handle missing values appropriately
+            $row[] = 0;
         }
     }
     $initialCentroids[] = $row;
@@ -50,6 +50,9 @@ $defaultIterations = 1000;
 
 if (isset($_POST['iterasi'])) {
     $maxIterations = intval($_POST['iterasi']);
+    if ($maxIterations <= 0) {
+        $maxIterations = $defaultIterations;
+    }
 } else {
     $maxIterations = $defaultIterations;
 }
@@ -281,7 +284,7 @@ if (isset($_POST['iterasi'])) {
                                 <?php endforeach; ?>
 
                                 <!-- Tabel Hasil Clustering Akhir -->
-                                <div class="col-12">
+                                <!-- <div class="col-12">
                                     <div class="card">
                                         <div class="card-body">
                                             <h4 class="card-title">Hasil Clustering Akhir</h4>
@@ -313,7 +316,7 @@ if (isset($_POST['iterasi'])) {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                             <?php endif; ?>
                         </div> <!-- /.row -->
                     </div><!-- /.container-fluid -->

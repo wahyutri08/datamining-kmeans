@@ -1,12 +1,47 @@
 <?php
 require_once '../functions.php';
-$keyword = $_GET["keyword"];
+
+$keyword = isset($_GET["keyword"]) ? $_GET["keyword"] : "";
+$page = isset($_GET["page"]) ? $_GET["page"] : 1;
+
+$jumlahDataPerHalaman = 10;
+$awalData = ($jumlahDataPerHalaman * $page) - $jumlahDataPerHalaman;
+
+$keyword = mysqli_real_escape_string($db, $keyword);
 
 $query = "SELECT * FROM kelurahan WHERE 
-            nama_kelurahan LIKE '%$keyword%'";
+            nama_kelurahan LIKE '%$keyword%'
+            LIMIT $awalData, $jumlahDataPerHalaman";
 
 $kelurahan = query($query);
 $atribut = query("SELECT * FROM atribut");
+
+// Query untuk menghitung jumlah data total
+$queryTotal = "SELECT COUNT(*) AS jumlah FROM kelurahan WHERE nama_kelurahan LIKE '%$keyword%'";
+$resultTotal = query($queryTotal);
+$jumlahData = $resultTotal[0]['jumlah'];
+
+// Menghitung jumlah halaman
+$jumlahHalaman = ceil($jumlahData / $jumlahDataPerHalaman);
+
+// Mendefinisikan tautan pagination secara langsung
+$pagination = '<ul class="pagination justify-content-end">';
+$pagination .= '<li class="page-item"><a class="page-link" href="?page=' . max(1, $page - 1) . '">Previous</a></li>';
+
+$jumlahTampil = min(5, $jumlahHalaman);
+$start = max(1, min($page - floor($jumlahTampil / 2), $jumlahHalaman - $jumlahTampil + 1));
+$end = min($start + $jumlahTampil - 1, $jumlahHalaman);
+
+for ($i = $start; $i <= $end; $i++) {
+    if ($i == $page) {
+        $pagination .= '<li class="page-item active"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
+    } else {
+        $pagination .= '<li class="page-item"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
+    }
+}
+
+$pagination .= '<li class="page-item"><a class="page-link" href="?page=' . min($jumlahHalaman, $page + 1) . '">Next</a></li>';
+$pagination .= '</ul>';
 
 ?>
 
@@ -66,3 +101,5 @@ $atribut = query("SELECT * FROM atribut");
         </tbody>
     </table>
 </div>
+<!-- Tampilkan pagination -->
+<?= $pagination ?>

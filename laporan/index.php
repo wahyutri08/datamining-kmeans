@@ -6,6 +6,8 @@ if (!isset($_SESSION["login"])) {
     exit;
 }
 
+$id_user = $_SESSION["id"];
+$user_role = $_SESSION["role"];
 
 ?>
 
@@ -72,7 +74,13 @@ if (!isset($_SESSION["login"])) {
                                                 </thead>
                                                 <tbody>
                                                     <?php
-                                                    $reports = query("SELECT laporan.id, users.nama, users.role, laporan.tanggal_laporan FROM laporan JOIN users ON laporan.user_id = users.id");
+                                                    if ($user_role == 'Admin') {
+                                                        // Role Admin Melihat Semua Data
+                                                        $reports = query("SELECT laporan.id, users.nama, users.role, laporan.tanggal_laporan FROM laporan JOIN users ON laporan.user_id = users.id");
+                                                    } else {
+                                                        $reports = query("SELECT laporan.id, users.nama, users.role, laporan.tanggal_laporan FROM laporan JOIN users ON laporan.user_id = users.id WHERE users.id = '$id_user'");
+                                                    }
+
                                                     foreach ($reports as $report) :
                                                     ?>
                                                         <tr>

@@ -2,6 +2,8 @@
 session_start();
 require_once '../functions.php';
 
+$error = '';
+
 if (isset($_POST["login"])) {
     $usernameOremail = $_POST["username"];
     $password = $_POST["password"];
@@ -10,22 +12,22 @@ if (isset($_POST["login"])) {
 
     if (mysqli_num_rows($result) === 1) {
         $row = mysqli_fetch_assoc($result);
-        $_SESSION["login"] = true;
-        $_SESSION['nama'] = $row['nama'];
-        $_SESSION['username'] = $row['username'];
-        $_SESSION['id'] = $row['id'];
-        $_SESSION['avatar'] = $row['avatar'];
-        $_SESSION['role'] = $row['role'];
-
         if (password_verify($password, $row["password"])) {
+            $_SESSION["login"] = true;
+            $_SESSION['nama'] = $row['nama'];
+            $_SESSION['username'] = $row['username'];
+            $_SESSION['id'] = $row['id'];
+            $_SESSION['avatar'] = $row['avatar'];
+            $_SESSION['role'] = $row['role'];
             header("Location: ../dashboard");
             exit;
+        } else {
+            $error = 'Password Salah.';
         }
+    } else {
+        $error = 'Username Atau Email Tidak Ditemukan.';
     }
-    $error = true;
 }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -75,11 +77,10 @@ if (isset($_POST["login"])) {
         <div class="login-register">
             <div class="login-box card">
                 <div class="card-body">
-                    <?php if (isset($error)) : ?>
-                        <script>
-                            alert('Username Atau Email dan Password Salah');
-                            document.location.href = '../login';
-                        </script>
+                    <?php if ($error) : ?>
+                        <div class="alert alert-danger" role="alert">
+                            <?= $error ?>
+                        </div>
                     <?php endif; ?>
                     <form class="form-horizontal form-material" id="loginform" action="" method="POST">
                         <div class="text-center">
@@ -88,7 +89,7 @@ if (isset($_POST["login"])) {
                         <h3 class="text-center m-t-20 m-b-10">Sign In</h3>
                         <div class="form-group ">
                             <div class="col-xs-12">
-                                <input class="form-control" id="username" name="username" type="text" required="" placeholder="Username" autocomplete="off">
+                                <input class="form-control" id="username" name="username" type="text" required="" placeholder="Username atau Email" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group">

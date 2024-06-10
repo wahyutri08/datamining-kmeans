@@ -7,7 +7,7 @@ $atribut = query("SELECT * FROM atribut");
 $id_laporan = $_GET['id'];
 
 // Ambil Data Laporan
-$laporan = query("SELECT laporan.id, users.nama, users.role, laporan.tanggal_laporan FROM laporan JOIN users ON laporan.user_id = users.id WHERE laporan.id = $id_laporan");
+$laporan = query("SELECT laporan.id, users.nama, users.role, laporan.jumlah_iterasi, laporan.tanggal_laporan FROM laporan JOIN users ON laporan.user_id = users.id WHERE laporan.id = $id_laporan");
 if (empty($laporan)) {
     die("Laporan tidak ditemukan.");
 }
@@ -78,6 +78,7 @@ $html = '<!DOCTYPE html>
    <p class="card-subtitle">ID Laporan : ' . $id_laporan . '</p>
    <p class="card-subtitle">Nama User : ' . $laporan[0]['nama'] . '</p>
    <p class="card-subtitle">Role : ' . $laporan[0]['role'] . '</p>
+   <p class="card-subtitle">Jumlah Iterasi : ' . $laporan[0]['jumlah_iterasi'] . '</p>
    <p class="card-subtitle">Tanggal Laporan : ' . $laporan[0]['tanggal_laporan'] . '</p>
    <table>
        <tr>

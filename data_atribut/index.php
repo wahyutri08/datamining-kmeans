@@ -6,7 +6,13 @@ if (!isset($_SESSION["login"])) {
     exit;
 }
 
-$atr = query("SELECT * FROM atribut");
+$jumlahDataPerHalaman = 10;
+$jumlahData = count(query("SELECT * FROM atribut"));
+$jumlahHalaman = ceil($jumlahData / $jumlahDataPerHalaman);
+$halamanAktif = (isset($_GET["page"])) ? $_GET["page"] : 1;
+$awalData = ($jumlahDataPerHalaman * $halamanAktif) - $jumlahDataPerHalaman;
+
+$atr = query("SELECT * FROM atribut LIMIT $awalData, $jumlahDataPerHalaman");
 
 if (isset($_POST["search"])) {
     $atr = searchAtribut($_POST["keyword"]);
@@ -35,31 +41,6 @@ if (isset($_POST["search"])) {
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
-    <!-- <style>
-        .container {
-            display: flex;
-            gap: 2rem;
-            /* Default gap */
-            justify-content: flex-start;
-        }
-
-        .float-start {
-            display: inline-block;
-        }
-
-        /* Media query for mobile devices */
-        @media (max-width: 600px) {
-            .container {
-                flex-direction: column;
-                gap: 0.5rem;
-                /* Gap for mobile devices */
-            }
-
-            .float-start {
-                margin-bottom: 1rem;
-            }
-        }
-    </style> -->
 </head>
 
 <body class="skin-red-dark fixed-layout">
@@ -171,6 +152,27 @@ if (isset($_POST["search"])) {
                                                     </tbody>
                                                 <?php endforeach; ?>
                                             </table>
+                                            <nav aria-label="Page navigation example" id="pagination-container">
+                                                <ul class="pagination justify-content-end">
+                                                    <li class="page-item"><a class="page-link" href="?page=<?= max(1, $halamanAktif - 1); ?>">Previous</a></li>
+                                                    <?php
+                                                    // Batasi jumlah maksimum item navigasi menjadi 5
+                                                    $jumlahTampil = min(5, $jumlahHalaman);
+                                                    // Hitung titik awal iterasi untuk tetap berada di tengah
+                                                    $start = max(1, min($halamanAktif - floor($jumlahTampil / 2), $jumlahHalaman - $jumlahTampil + 1));
+                                                    // Hitung titik akhir iterasi
+                                                    $end = min($start + $jumlahTampil - 1, $jumlahHalaman);
+
+                                                    for ($i = $start; $i <= $end; $i++) :
+                                                        if ($i == $halamanAktif) : ?>
+                                                            <li class="page-item active"><a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a></li>
+                                                        <?php else : ?>
+                                                            <li class="page-item"><a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a></li>
+                                                    <?php endif;
+                                                    endfor; ?>
+                                                    <li class="page-item"><a class="page-link" href="?page=<?= min($jumlahHalaman, $halamanAktif + 1); ?>">Next</a></li>
+                                                </ul>
+                                            </nav>
                                         </div>
                                     </div>
                                 </div>

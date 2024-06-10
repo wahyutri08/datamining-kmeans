@@ -5,8 +5,15 @@ if (!isset($_SESSION["login"])) {
     header("Location:../login");
     exit;
 }
-// require_once '../functions.php';
-$cluster = query("SELECT * FROM cluster");
+
+$jumlahDataPerHalaman = 10;
+$jumlahData = count(query("SELECT * FROM cluster"));
+$jumlahHalaman = ceil($jumlahData / $jumlahDataPerHalaman);
+$halamanAktif = (isset($_GET["page"])) ? $_GET["page"] : 1;
+$awalData = ($jumlahDataPerHalaman * $halamanAktif) - $jumlahDataPerHalaman;
+
+$cluster = query("SELECT * FROM cluster LIMIT $awalData, $jumlahDataPerHalaman");
+
 if (isset($_POST["search"])) {
     $cluster = searchCluster($_POST["keyword"]);
 }
@@ -79,7 +86,6 @@ if (isset($_POST["search"])) {
                                 <li class="breadcrumb-item">Master data</li>
                                 <li class="breadcrumb-item active">Data Cluster</li>
                             </ol>
-                            <a href="add_cluster.php"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Tambah Cluster</button></a>
                         </div>
                     </div>
                 </div>
@@ -145,6 +151,27 @@ if (isset($_POST["search"])) {
                                                     </tbody>
                                                 <?php endforeach; ?>
                                             </table>
+                                            <nav aria-label="Page navigation example" id="pagination-container">
+                                                <ul class="pagination justify-content-end">
+                                                    <li class="page-item"><a class="page-link" href="?page=<?= max(1, $halamanAktif - 1); ?>">Previous</a></li>
+                                                    <?php
+                                                    // Batasi jumlah maksimum item navigasi menjadi 5
+                                                    $jumlahTampil = min(5, $jumlahHalaman);
+                                                    // Hitung titik awal iterasi untuk tetap berada di tengah
+                                                    $start = max(1, min($halamanAktif - floor($jumlahTampil / 2), $jumlahHalaman - $jumlahTampil + 1));
+                                                    // Hitung titik akhir iterasi
+                                                    $end = min($start + $jumlahTampil - 1, $jumlahHalaman);
+
+                                                    for ($i = $start; $i <= $end; $i++) :
+                                                        if ($i == $halamanAktif) : ?>
+                                                            <li class="page-item active"><a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a></li>
+                                                        <?php else : ?>
+                                                            <li class="page-item"><a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a></li>
+                                                    <?php endif;
+                                                    endfor; ?>
+                                                    <li class="page-item"><a class="page-link" href="?page=<?= min($jumlahHalaman, $halamanAktif + 1); ?>">Next</a></li>
+                                                </ul>
+                                            </nav>
                                         </div>
                                     </div>
                                 </div>

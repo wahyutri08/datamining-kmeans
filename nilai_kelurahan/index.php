@@ -5,8 +5,13 @@ if (!isset($_SESSION["login"])) {
     header("Location:../login");
     exit;
 }
-// require_once '../functions.php';
-$kelurahan = query("SELECT * FROM kelurahan");
+$jumlahDataPerHalaman = 10;
+$jumlahData = count(query("SELECT * FROM kelurahan"));
+$jumlahHalaman = ceil($jumlahData / $jumlahDataPerHalaman);
+$halamanAktif = (isset($_GET["page"])) ? $_GET["page"] : 1;
+$awalData = ($jumlahDataPerHalaman * $halamanAktif) - $jumlahDataPerHalaman;
+
+$kelurahan = query("SELECT * FROM kelurahan LIMIT $awalData, $jumlahDataPerHalaman");
 $atribut = query("SELECT * FROM atribut");
 ?>
 
@@ -166,6 +171,27 @@ $atribut = query("SELECT * FROM atribut");
                                                     <?php endforeach; ?>
                                                 </tbody>
                                             </table>
+                                            <nav aria-label="Page navigation example" id="pagination-container">
+                                                <ul class="pagination justify-content-end">
+                                                    <li class="page-item"><a class="page-link" href="?page=<?= max(1, $halamanAktif - 1); ?>">Previous</a></li>
+                                                    <?php
+                                                    // Batasi jumlah maksimum item navigasi menjadi 5
+                                                    $jumlahTampil = min(5, $jumlahHalaman);
+                                                    // Hitung titik awal iterasi untuk tetap berada di tengah
+                                                    $start = max(1, min($halamanAktif - floor($jumlahTampil / 2), $jumlahHalaman - $jumlahTampil + 1));
+                                                    // Hitung titik akhir iterasi
+                                                    $end = min($start + $jumlahTampil - 1, $jumlahHalaman);
+
+                                                    for ($i = $start; $i <= $end; $i++) :
+                                                        if ($i == $halamanAktif) : ?>
+                                                            <li class="page-item active"><a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a></li>
+                                                        <?php else : ?>
+                                                            <li class="page-item"><a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a></li>
+                                                    <?php endif;
+                                                    endfor; ?>
+                                                    <li class="page-item"><a class="page-link" href="?page=<?= min($jumlahHalaman, $halamanAktif + 1); ?>">Next</a></li>
+                                                </ul>
+                                            </nav>
                                         </div>
                                     </div>
                                 </div>
