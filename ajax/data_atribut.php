@@ -42,7 +42,7 @@ $pagination .= '</ul>';
 ?>
 
 <div class="table-responsive">
-    <table class="table color-table red-table">
+    <table class="table color-table info-table">
         <thead>
             <tr>
                 <th>ID Atribut</th>

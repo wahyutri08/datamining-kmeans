@@ -5,7 +5,7 @@ if (!isset($_SESSION["login"])) {
     header("Location: ../login");
     exit;
 }
-// require '../functions.php';
+
 $id_kelurahan = $_GET["id_kelurahan"];
 
 if (deleteKelurahan($id_kelurahan) > 0) {

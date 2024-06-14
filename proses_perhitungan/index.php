@@ -74,7 +74,6 @@ if (isset($_POST['iterasi'])) {
     simpanhasilakhir($centroids, $clusters, $history, $_SESSION['id'], date('Y-m-d H:i:s'), $kelurahan, $data, $atribut, $actualIterations);
 }
 
-
 ?>
 
 <!DOCTYPE html>
@@ -92,7 +91,7 @@ if (isset($_POST['iterasi'])) {
     <link href="../assets/node_modules/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" />
 </head>
 
-<body class="skin-red-dark fixed-layout">
+<body class="skin-megna fixed-layout">
     <div class="preloader">
         <div class="loader">
             <div class="loader__figure"></div>
@@ -282,41 +281,6 @@ if (isset($_POST['iterasi'])) {
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
-
-                                <!-- Tabel Hasil Clustering Akhir -->
-                                <!-- <div class="col-12">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h4 class="card-title">Hasil Clustering Akhir</h4>
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Nama Kelurahan</th>
-                                                            <?php foreach ($atribut as $atr) : ?>
-                                                                <th><?= $atr['nama_atribut']; ?></th>
-                                                            <?php endforeach; ?>
-                                                            <th>Cluster</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <?php foreach ($clusters as $clusterId => $clusterData) : ?>
-                                                            <?php foreach ($clusterData as $dataIndex) : ?>
-                                                                <tr>
-                                                                    <td><?= $kelurahan[$dataIndex]['nama_kelurahan'] ?></td>
-                                                                    <?php foreach ($data[$dataIndex] as $value) : ?>
-                                                                        <td><?= number_format($value) ?></td>
-                                                                    <?php endforeach; ?>
-                                                                    <td>Cluster <?= $clusterId + 1 ?></td>
-                                                                </tr>
-                                                            <?php endforeach; ?>
-                                                        <?php endforeach; ?>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
                             <?php endif; ?>
                         </div> <!-- /.row -->
                     </div><!-- /.container-fluid -->

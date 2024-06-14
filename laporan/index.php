@@ -27,7 +27,7 @@ $user_role = $_SESSION["role"];
     <link href="../assets/node_modules/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" />
 </head>
 
-<body class="skin-red-dark fixed-layout">
+<body class="skin-megna fixed-layout">
     <div class="preloader">
         <div class="loader">
             <div class="loader__figure"></div>

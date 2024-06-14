@@ -5,7 +5,6 @@ if (!isset($_SESSION["login"])) {
     header("Location:../login");
     exit;
 }
-// require_once '../functions.php';
 
 $id = $_SESSION["id"];
 $pwd = query("SELECT * FROM users WHERE id = $id")[0];
@@ -47,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <![endif]-->
 </head>
 
-<body class="skin-red-dark fixed-layout">
+<body class="skin-megna fixed-layout">
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->

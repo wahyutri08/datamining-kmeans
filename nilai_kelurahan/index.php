@@ -38,7 +38,7 @@ $atribut = query("SELECT * FROM atribut");
 <![endif]-->
 </head>
 
-<body class="skin-red-dark fixed-layout">
+<body class="skin-megna fixed-layout">
 
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
@@ -117,10 +117,10 @@ $atribut = query("SELECT * FROM atribut");
                                         </div>
                                         <!-- <h6 class="card-subtitle">Add class <code>.color-bordered-table .red-bordered-table</code></h6> -->
                                         <div class="table-responsive">
-                                            <table class="table color-table red-table">
+                                            <table class="table color-table info-table">
                                                 <thead>
                                                     <tr>
-                                                        <th>No</th>
+                                                        <th>ID</th>
                                                         <th>Nama Kelurahan</th>
                                                         <?php foreach ($atribut as $row) : ?>
                                                             <th><?= $row["nama_atribut"]; ?></th>
@@ -129,12 +129,10 @@ $atribut = query("SELECT * FROM atribut");
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php $n = 1; ?>
                                                     <?php foreach ($kelurahan as $rows) : ?>
                                                         <tr>
-                                                            <td><?= $n; ?></td>
+                                                            <td><?= $rows["id_kelurahan"]; ?></td>
                                                             <td><?= $rows["nama_kelurahan"]; ?></td>
-                                                            <?php $n++; ?>
                                                             <?php foreach ($atribut as $row) : ?>
                                                                 <td>
                                                                     <?php

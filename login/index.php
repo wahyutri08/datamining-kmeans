@@ -41,7 +41,7 @@ if (isset($_POST["login"])) {
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/logo/logo_mms.jpeg">
     <title>Login</title>
 
     <!-- page css -->
@@ -84,7 +84,7 @@ if (isset($_POST["login"])) {
                     <?php endif; ?>
                     <form class="form-horizontal form-material" id="loginform" action="" method="POST">
                         <div class="text-center">
-                            <a href="../login" class="db"><img src="../assets/images/logo-icon.png" alt="Home" /><br /><img src="../assets/images/logo-text.png" alt="Home" /></a>
+                            <a href="../login" class="db"><img src="../assets/images/logo/logo-mms-removebg.png" style="width: 260px; height: 55px" alt="Home" /><br /></a>
                         </div>
                         <h3 class="text-center m-t-20 m-b-10">Sign In</h3>
                         <div class="form-group ">

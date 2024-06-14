@@ -43,7 +43,7 @@ if (isset($_POST["search"])) {
 <![endif]-->
 </head>
 
-<body class="skin-red-dark fixed-layout">
+<body class="skin-megna fixed-layout">
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->
@@ -123,7 +123,7 @@ if (isset($_POST["search"])) {
                                         </div>
                                         <!-- <h6 class="card-subtitle">Add class <code>.color-bordered-table .red-bordered-table</code></h6> -->
                                         <div class="table-responsive">
-                                            <table id="demo-foo-pagination" class="table color-table red-table toggle-arrow-tiny" data-paging="true" data-paging-size="7">
+                                            <table id="demo-foo-pagination" class="table color-table info-table toggle-arrow-tiny" data-paging="true" data-paging-size="7">
                                                 <thead>
                                                     <tr>
                                                         <th>ID Kelurahan</th>

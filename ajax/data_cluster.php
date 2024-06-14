@@ -43,7 +43,7 @@ $pagination .= '<li class="page-item"><a class="page-link" href="?page=' . min($
 $pagination .= '</ul>';
 ?>
 
-<table class="table color-table red-table">
+<table class="table color-table info-table">
     <thead>
         <tr>
             <th>ID Cluster</th>

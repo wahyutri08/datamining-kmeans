@@ -38,7 +38,7 @@ $users = query("SELECT * FROM users");
 <![endif]-->
 </head>
 
-<body class="skin-red-dark fixed-layout">
+<body class="skin-megna fixed-layout">
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->
@@ -100,7 +100,7 @@ $users = query("SELECT * FROM users");
                                         <h6 class="card-subtitle">Data Users</h6>
                                         <a href="../add_users" class="btn waves-effect waves-light btn-rounded btn-info mb-2"><i class="fas fa-user-plus"></i> Add User</a>
                                         <div class="table-responsive">
-                                            <table class="table color-table red-table">
+                                            <table class="table color-table info-table">
                                                 <thead>
                                                     <tr>
                                                         <th>#</th>

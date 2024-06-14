@@ -5,7 +5,7 @@ if (!isset($_SESSION["login"])) {
     header("Location: ../login");
     exit;
 }
-// require '../functions.php';
+
 $id_atribut = $_GET["id_atribut"];
 
 if (deleteAtribut($id_atribut) > 0) {

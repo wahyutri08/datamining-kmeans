@@ -10,19 +10,7 @@ if ($_SESSION['role'] !== 'Admin') {
     header("Location: ../dashboard");
     exit;
 }
-// require_once '../functions.php';
 
-// if (isset($_POST["submit"])) {
-//     if (register($_POST) > 0) {
-//         echo "
-//         <script>
-//         alert('User Berhasil Ditambahkan');
-//         document.location.href = '../users'
-//         </script>";
-//     } else {
-//         echo mysqli_error($db);
-//     }
-// }
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = register($_POST);
     if ($result > 0) {
@@ -65,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <![endif]-->
 </head>
 
-<body class="skin-red-dark fixed-layout">
+<body class="skin-megna fixed-layout">
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->

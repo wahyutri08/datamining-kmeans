@@ -5,7 +5,7 @@ if (!isset($_SESSION["login"])) {
     header("Location: ../login");
     exit;
 }
-// require '../functions.php';
+
 $id_cluster = $_GET["id_cluster"];
 
 if (deleteCluster($id_cluster) > 0) {

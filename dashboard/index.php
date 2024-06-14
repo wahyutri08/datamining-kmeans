@@ -5,7 +5,7 @@ if (!isset($_SESSION["login"])) {
     header("Location:../login");
     exit;
 }
-// require_once '../functions.php';
+
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +31,7 @@ if (!isset($_SESSION["login"])) {
 <![endif]-->
 </head>
 
-<body class="skin-red-dark fixed-layout">
+<body class="skin-megna fixed-layout">
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->
@@ -90,8 +90,10 @@ if (!isset($_SESSION["login"])) {
                                     <div class="col-xl-12 col-lg-12 py-2">
                                         <div class="card shadow-sm" style="height : 19rem; background-color: #FFFFFF; background-position: calc(100% + 1rem) bottom; background-size: 30% auto; background-repeat: no-repeat; background-image: url(../assets/images/background/rhone.svg);">
                                             <div class=" px-4 mt-4">
-                                                <h4 class="text-primary"> <b>Hallo, <?php echo $_SESSION["nama"]; ?></b> </h4>
-                                                <h4 class="text-black-50 mb-0">Selamat Datang Di Aplikasi </h4>
+                                                <h4 class="text-primary"> <b>Selamat Datang, <?= $_SESSION["nama"]; ?></b> </h4>
+                                                <h4 class="text-black-60 mb-0">Aplikasi Data Mining Untuk Clustering Issue Pada EDC (Electronic Data Capture)</h4>
+                                                <h4 class="text-black-60 mb-0">Di Daerah DKI Jakarta Menggunakan Algoritma K-Means</h4>
+                                                <h4 class="text-black-60 mb-0">(Studi Kasus : PT. Maha Mitra Sejati)</h4>
                                             </div>
                                         </div>
                                     </div>

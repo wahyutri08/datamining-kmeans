@@ -46,10 +46,10 @@ $pagination .= '</ul>';
 ?>
 
 <div class="table-responsive">
-    <table class="table color-table red-table">
+    <table class="table color-table info-table">
         <thead>
             <tr>
-                <th>No</th>
+                <th>ID</th>
                 <th>Nama Kelurahan</th>
                 <?php foreach ($atribut as $row) : ?>
                     <th><?= $row["nama_atribut"]; ?></th>
@@ -58,12 +58,10 @@ $pagination .= '</ul>';
             </tr>
         </thead>
         <tbody>
-            <?php $n = 1; ?>
             <?php foreach ($kelurahan as $rows) : ?>
                 <tr>
-                    <td><?= $n; ?></td>
+                    <td><?= $rows["id_kelurahan"]; ?></td>
                     <td><?= $rows["nama_kelurahan"]; ?></td>
-                    <?php $n++; ?>
                     <?php foreach ($atribut as $row) : ?>
                         <td>
                             <?php
