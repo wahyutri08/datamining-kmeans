@@ -2,8 +2,8 @@
 session_start();
 include_once("../auth_check.php");
 
-if (!isset($_SESSION["login"])) {
-    echo json_encode(['status' => 'redirect']);
+if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
+    header("Location: ../login");
     exit;
 }
 

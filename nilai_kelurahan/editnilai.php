@@ -1,12 +1,11 @@
 <?php
 session_start();
 include_once("../auth_check.php");
-if (!isset($_SESSION["login"])) {
-    header("Location:../login");
+if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
+    header("Location: ../login");
     exit;
 }
 
-// require '../functions.php';
 $id_kelurahan = $_GET["id_kelurahan"];
 $kelurahan = query("SELECT * FROM kelurahan WHERE id_kelurahan = $id_kelurahan")[0];
 $atribut = query("SELECT * FROM atribut");

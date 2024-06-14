@@ -1,11 +1,10 @@
 <?php
 session_start();
 include_once("../auth_check.php");
-if (!isset($_SESSION["login"])) {
-    header("Location:../login");
+if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
+    header("Location: ../login");
     exit;
 }
-// require_once '../functions.php';
 
 $id_cluster = $_GET["id_cluster"];
 $cluster = query("SELECT * FROM cluster WHERE id_cluster = $id_cluster")[0];

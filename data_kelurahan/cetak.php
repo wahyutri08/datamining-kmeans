@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
-
 require_once '../functions.php';
+
 $kelurahan = query("SELECT * FROM kelurahan");
 
 $mpdf = new \Mpdf\Mpdf();

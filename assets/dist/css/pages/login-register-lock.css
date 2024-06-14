@@ -35,6 +35,23 @@ Login register and recover password Page
   padding: 10% 0;
   position: fixed; }
 
+/* Mobile specific styles */
+@media (max-width: 768px) {
+  .login-register {
+    height: 100vh;
+    /* Ensure full viewport height */
+    width: 100vw;
+    /* Ensure full viewport width */
+    padding: 0;
+    /* Remove padding for a tighter fit */
+    display: flex;
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically */
+  }
+}
+
 .login-box {
   width: 400px;
   margin: 0 auto; }

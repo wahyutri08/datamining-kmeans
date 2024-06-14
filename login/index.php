@@ -2,6 +2,16 @@
 session_start();
 require_once '../functions.php';
 
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
+// Cegah akses ke halaman ini jika pengguna sudah login
+if (isset($_SESSION["login"]) && $_SESSION["login"] === true) {
+    header("Location: ../dashboard");
+    exit;
+}
+
 $error = '';
 
 if (isset($_POST["login"])) {
@@ -84,7 +94,7 @@ if (isset($_POST["login"])) {
                     <?php endif; ?>
                     <form class="form-horizontal form-material" id="loginform" action="" method="POST">
                         <div class="text-center">
-                            <a href="../login" class="db"><img src="../assets/images/logo/logo-mms-removebg.png" style="width: 260px; height: 55px" alt="Home" /><br /></a>
+                            <a href="../login" class="db"><img src="../assets/images/logo/logo-mms-removebg (1).png" style="width: 260px; height: 55px" alt="Home" /><br /></a>
                         </div>
                         <h3 class="text-center m-t-20 m-b-10">Sign In</h3>
                         <div class="form-group ">
@@ -132,6 +142,16 @@ if (isset($_POST["login"])) {
             $("#loginform").slideUp();
             $("#recoverform").fadeIn();
         });
+
+        // Cegah pengguna kembali ke halaman login dengan tombol back browser
+        window.history.forward();
+
+        function noBack() {
+            window.history.forward();
+        }
+        window.onpageshow = function(evt) {
+            if (evt.persisted) noBack();
+        }
     </script>
 
 </body>

@@ -1,8 +1,8 @@
 <?php
 session_start();
 include_once("../auth_check.php");
-if (!isset($_SESSION["login"])) {
-    header("Location:../login");
+if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
+    header("Location: ../login");
     exit;
 }
 
@@ -106,7 +106,7 @@ if (isset($_POST["search"])) {
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <div class="d-flex">
                                                 <div class="float-start mb-3 me-2">
-                                                    <a href="cetak.php" class="btn btn-secondary btn-rounded btn-danger"><i class="fas fa-file-pdf"></i> Cetak PDF</a>
+                                                    <a href="cetak.php" target="_blank" class="btn btn-secondary btn-rounded btn-danger"><i class="fas fa-file-pdf"></i> Cetak PDF</a>
                                                 </div>
                                                 <div class="float-start">
                                                     <a href="add_atribut.php" class="btn btn-secondary btn-rounded btn-info"><i class="fa fa-plus"></i> Tambah</a>

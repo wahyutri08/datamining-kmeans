@@ -1,11 +1,11 @@
 <?php
 session_start();
 include_once("../auth_check.php");
-if (!isset($_SESSION["login"])) {
+if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
     header("Location: ../login");
     exit;
 }
-// require '../functions.php';
+
 $id_laporan = $_GET["id"];
 
 if (deleteReport($id_laporan) > 0) {
