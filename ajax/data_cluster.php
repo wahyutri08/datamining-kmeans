@@ -9,13 +9,15 @@ $awalData = ($jumlahDataPerHalaman * $page) - $jumlahDataPerHalaman;
 $keyword = mysqli_real_escape_string($db, $keyword);
 
 $query = "SELECT * FROM cluster WHERE 
-            nama_cluster LIKE '%$keyword%'
+            nama_cluster LIKE '%$keyword%' OR
+            id_cluster LIKE '%$keyword%'
             LIMIT $awalData, $jumlahDataPerHalaman";
 
 $cluster = query($query);
 
 // Query untuk menghitung jumlah data total
-$queryTotal = "SELECT COUNT(*) AS jumlah FROM cluster WHERE nama_cluster LIKE '%$keyword%'";
+$queryTotal = "SELECT COUNT(*) AS jumlah FROM cluster WHERE nama_cluster LIKE '%$keyword%' OR
+            id_cluster LIKE '%$keyword%'";
 $resultTotal = query($queryTotal);
 $jumlahData = $resultTotal[0]['jumlah'];
 
@@ -63,7 +65,7 @@ $pagination .= '</ul>';
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                             <li><a class="dropdown-item" href="edit_cluster.php?id_cluster=<?= $row["id_cluster"]; ?>">Edit</a></li>
-                            <li><a class="dropdown-item" href="delete_cluster.php?id_cluster=<?= $row["id_cluster"]; ?>" onclick="return confirm('Yakin ?');">Delete</a></li>
+                            <li><a class="dropdown-item tombol-hapus" href="delete_cluster.php?id_cluster=<?= $row["id_cluster"]; ?>">Delete</a></li>
                         </ul>
                     </div>
                 </td>

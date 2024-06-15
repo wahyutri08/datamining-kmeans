@@ -9,13 +9,14 @@ $awalData = ($jumlahDataPerHalaman * $page) - $jumlahDataPerHalaman;
 $keyword = mysqli_real_escape_string($db, $keyword);
 
 $query = "SELECT * FROM atribut WHERE 
-            nama_atribut LIKE '%$keyword%'
+            nama_atribut LIKE '%$keyword%' OR
+            id_atribut LIKE '%$keyword%'
             LIMIT $awalData, $jumlahDataPerHalaman";
 
 $atribut = query($query);
 
 // Query untuk menghitung jumlah data total
-$queryTotal = "SELECT COUNT(*) AS jumlah FROM atribut WHERE nama_atribut LIKE '%$keyword%'";
+$queryTotal = "SELECT COUNT(*) AS jumlah FROM atribut WHERE nama_atribut LIKE '%$keyword%' OR id_atribut LIKE '%$keyword%'";
 $resultTotal = query($queryTotal);
 $jumlahData = $resultTotal[0]['jumlah'];
 
