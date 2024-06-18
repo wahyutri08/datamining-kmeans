@@ -9,11 +9,16 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
 $jumlahDataPerHalaman = 10;
 $jumlahData = count(query("SELECT * FROM kelurahan"));
 $jumlahHalaman = ceil($jumlahData / $jumlahDataPerHalaman);
-$halamanAktif = (isset($_GET["page"])) ? $_GET["page"] : 1;
+$halamanAktif = (isset($_GET["page"]) && is_numeric($_GET["page"]) && $_GET["page"] > 0 && $_GET["page"] <= $jumlahHalaman) ? (int)$_GET["page"] : 1;
 $awalData = ($jumlahDataPerHalaman * $halamanAktif) - $jumlahDataPerHalaman;
 
 $kelurahan = query("SELECT * FROM kelurahan LIMIT $awalData, $jumlahDataPerHalaman");
 $atribut = query("SELECT * FROM atribut");
+
+if ($halamanAktif > $jumlahHalaman) {
+    header("Location: ../nilai_kelurahan");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>

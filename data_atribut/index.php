@@ -9,7 +9,7 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
 $jumlahDataPerHalaman = 10;
 $jumlahData = count(query("SELECT * FROM atribut"));
 $jumlahHalaman = ceil($jumlahData / $jumlahDataPerHalaman);
-$halamanAktif = (isset($_GET["page"])) ? $_GET["page"] : 1;
+$halamanAktif = (isset($_GET["page"]) && is_numeric($_GET["page"]) && $_GET["page"] > 0 && $_GET["page"] <= $jumlahHalaman) ? (int)$_GET["page"] : 1;
 $awalData = ($jumlahDataPerHalaman * $halamanAktif) - $jumlahDataPerHalaman;
 
 $atr = query("SELECT * FROM atribut LIMIT $awalData, $jumlahDataPerHalaman");
@@ -18,6 +18,10 @@ if (isset($_POST["search"])) {
     $atr = searchAtribut($_POST["keyword"]);
 }
 
+if ($halamanAktif > $jumlahHalaman) {
+    header("Location: ../data_atribut");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
