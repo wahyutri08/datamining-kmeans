@@ -86,7 +86,7 @@ if ($halamanAktif > $jumlahHalaman) {
                             <ol class="breadcrumb justify-content-end">
                                 <li class="breadcrumb-item"><a href="../dashboard">Home</a></li>
                                 <li class="breadcrumb-item">Nilai data</li>
-                                <li class="breadcrumb-item active">Data Nilai Kelurahan</li>
+                                <li class="breadcrumb-item active">Nilai Kelurahan</li>
                             </ol>
                             <!-- <a href="add_kelurahan.php"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Tambah Kelurahan</button></a> -->
                         </div>

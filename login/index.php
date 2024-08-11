@@ -92,24 +92,31 @@ if (isset($_POST["login"])) {
                             <?= $error ?>
                         </div>
                     <?php endif; ?>
-                    <form class="form-horizontal form-material" id="loginform" action="" method="POST">
+                    <form class="form-horizontal" id="loginform" action="" method="POST">
                         <div class="text-center">
                             <a href="../login" class="db"><img src="../assets/images/logo/logo-mms-removebg (1).png" style="width: 260px; height: 55px" alt="Home" /><br /></a>
                         </div>
-                        <h3 class="text-center m-t-20 m-b-10">Sign In</h3>
-                        <div class="form-group ">
+                        <h3 class="text-center m-t-10 m-b-20">Log In</h3>
+                        <!-- <div class="form-group">
                             <div class="col-xs-12">
                                 <input class="form-control" id="username" name="username" type="text" required="" placeholder="Username atau Email" autocomplete="off">
+                            </div>
+                        </div> -->
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="ti-user"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Username atau Email" autocomplete="off" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="ti-lock"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" required="" placeholder="Password">
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-xs-12">
-                                <input class="form-control" type="password" id="password" name="password" required="" placeholder="Password">
-                            </div>
-                        </div>
-                        <div class="form-group text-center">
-                            <div class="col-xs-12 p-b-20">
-                                <button class="btn w-100 btn-lg btn-info btn-rounded text-white" name="login" type="submit"><i class="fas fa-sign-in-alt"></i> Log In</button>
+                                <button class="btn btn-secondary btn-info text-white" name="login" type="submit"><i class="fas fa-sign-in-alt"></i> Log In</button>
                             </div>
                         </div>
                     </form>

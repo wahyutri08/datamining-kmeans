@@ -6,8 +6,25 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
     exit;
 }
 
-$id_atribut = $_GET["id_atribut"];
-$atribut = query("SELECT * FROM atribut WHERE id_atribut = $id_atribut")[0];
+if (isset($_GET["id_atribut"])) {
+    $id_atribut = $_GET["id_atribut"];
+} else {
+    header("Location: ../error.php?message=ID atribut tidak ditemukan");
+    exit;
+}
+
+if ($id_atribut === null) {
+    header("Location: ../error.php?message=ID Atribut tidak ditemukan");
+    exit;
+}
+
+$atribut = query("SELECT * FROM atribut WHERE id_atribut = $id_atribut");
+
+if (empty($atribut)) {
+    header("Location: ../error.php?message=ID Atribut tidak valid");
+    exit;
+}
+$atribut = $atribut[0];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = editAtribut($_POST);
@@ -20,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     exit;
 }
+
 
 
 ?>
@@ -88,6 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <ol class="breadcrumb justify-content-end">
                                 <li class="breadcrumb-item"><a href="../dashboard">Home</a></li>
                                 <li class="breadcrumb-item">Master Data</li>
+                                <li class="breadcrumb-item">Data Atribut</li>
                                 <li class="breadcrumb-item">Edit Atribut</li>
                                 <li class="breadcrumb-item active"><?= $atribut["nama_atribut"]; ?></li>
                             </ol>

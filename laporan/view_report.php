@@ -6,7 +6,14 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
     exit;
 }
 
-$id_laporan = $_GET['id'];
+if (isset($_GET['id'])) {
+    $id_laporan = intval($_GET['id']);
+    if ($id_laporan <= 0) {
+        $id_laporan = 0;
+    }
+} else {
+    $id_laporan = 0;
+}
 
 // Ambil Data Lpaoran
 $laporan = query("SELECT 

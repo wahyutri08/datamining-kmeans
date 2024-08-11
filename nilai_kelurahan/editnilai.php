@@ -90,6 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <ol class="breadcrumb justify-content-end">
                                 <li class="breadcrumb-item"><a href="../dashboard">Home</a></li>
                                 <li class="breadcrumb-item">Nilai Data</li>
+                                <li class="breadcrumb-item">Nilai Kelurahan</li>
                                 <li class="breadcrumb-item">Edit Nilai Kelurahan</li>
                                 <li class="breadcrumb-item active"><?= $kelurahan["nama_kelurahan"] ?></li>
                             </ol>

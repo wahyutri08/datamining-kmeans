@@ -85,8 +85,8 @@ if ($halamanAktif > $jumlahHalaman) {
                         <div class="d-flex justify-content-end align-items-center">
                             <ol class="breadcrumb justify-content-end">
                                 <li class="breadcrumb-item"><a href="../dashboard">Home</a></li>
-                                <li class="breadcrumb-item">Nilai data</li>
-                                <li class="breadcrumb-item active">Data Nilai Cluster</li>
+                                <li class="breadcrumb-item">Nilai Data</li>
+                                <li class="breadcrumb-item active">Nilai Cluster</li>
                             </ol>
                         </div>
                     </div>
