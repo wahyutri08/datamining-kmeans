@@ -90,7 +90,7 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
                                     <div class="col-xl-12 col-lg-12 py-2">
                                         <div class="card shadow-sm" style="height : 19rem; background-color: #FFFFFF; background-position: calc(100% + 1rem) bottom; background-size: 30% auto; background-repeat: no-repeat; background-image: url(../assets/images/background/rhone.svg);">
                                             <div class=" px-4 mt-4">
-                                                <h4 class="text-primary"> <b>Selamat Datang, <?= $_SESSION["nama"]; ?></b> </h4>
+                                                <h4 class="text-primary"> <b>Hallo, <?= $_SESSION["nama"]; ?></b> </h4>
                                                 <h4 class="text-black-60 mb-0">Aplikasi Data Mining Untuk Clustering Issue Pada EDC (Electronic Data Capture)</h4>
                                                 <h4 class="text-black-60 mb-0">Di Daerah DKI Jakarta Menggunakan Algoritma K-Means</h4>
                                                 <h4 class="text-black-60 mb-0">(Studi Kasus : PT. Maha Mitra Sejati)</h4>
