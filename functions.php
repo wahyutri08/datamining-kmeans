@@ -676,43 +676,78 @@ function simpanhasilakhir($centroids, $clusters, $history, $id_user, $dateReport
 {
     global $db;
 
-    // Masukkan data ke tabel laporan
-    $query = "INSERT INTO laporan (user_id, tanggal_laporan, jumlah_iterasi) VALUES ('$id_user', '$dateReport', '$actualIterations')";
-    if (mysqli_query($db, $query)) {
-        $id_laporan = mysqli_insert_id($db);
+    // Normalisasi tanggal_laporan hanya menjadi tanggal tanpa waktu
+    $dateReport = date('Y-m-d', strtotime($dateReport));
 
-        // Masukkan data ke tabel laporan_hasil_akhir
-        foreach ($clusters as $clusterId => $clusterData) {
-            foreach ($clusterData as $dataIndex) {
-                $nama_kelurahan = $kelurahan[$dataIndex]['nama_kelurahan'];
-                $nama_cluster = 'Cluster ' . ($clusterId + 1);
+    // Cek jika laporan dengan user_id, tanggal_laporan, dan jumlah_iterasi sudah ada
+    $query = "SELECT id FROM laporan WHERE user_id = '$id_user' AND DATE(tanggal_laporan) = '$dateReport' AND jumlah_iterasi = '$actualIterations'";
+    $result = mysqli_query($db, $query);
 
+    if (mysqli_num_rows($result) == 0) {
+        // Jika laporan belum ada, masukkan laporan baru
+        $query = "INSERT INTO laporan (user_id, tanggal_laporan, jumlah_iterasi) VALUES ('$id_user', '$dateReport', '$actualIterations')";
+        if (mysqli_query($db, $query)) {
+            $id_laporan = mysqli_insert_id($db);
+        } else {
+            echo "Error inserting into laporan: " . mysqli_error($db) . "<br>";
+            return;
+        }
+    } else {
+        // Jika laporan sudah ada, ambil ID laporan yang ada
+        $row = mysqli_fetch_assoc($result);
+        $id_laporan = $row['id'];
+    }
+
+    // Masukkan data ke tabel laporan_hasil_akhir
+    foreach ($clusters as $clusterId => $clusterData) {
+        foreach ($clusterData as $dataIndex) {
+            $nama_kelurahan = $kelurahan[$dataIndex]['nama_kelurahan'];
+            $nama_cluster = 'Cluster ' . ($clusterId + 1);
+
+            // Cek apakah data laporan_hasil_akhir sudah ada
+            $query = "SELECT id FROM laporan_hasil_akhir WHERE id_laporan = '$id_laporan' AND nama_kelurahan = '$nama_kelurahan' AND nama_cluster = '$nama_cluster'";
+            $result = mysqli_query($db, $query);
+
+            if (mysqli_num_rows($result) == 0) {
+                // Jika belum ada, masukkan data ke tabel laporan_hasil_akhir
                 $query = "INSERT INTO laporan_hasil_akhir (id_laporan, nama_kelurahan, nama_cluster) VALUES ('$id_laporan', '$nama_kelurahan', '$nama_cluster')";
                 if (mysqli_query($db, $query)) {
                     $id_laporan_hasil_akhir = mysqli_insert_id($db);
-
-                    // Masukkan data ke tabel laporan_hasil_akhir_atribut
-                    foreach ($data[$dataIndex] as $attrIndex => $value) {
-                        $nama_atribut = $atribut[$attrIndex]['nama_atribut'];
-                        $nilai = number_format($value);
-
-                        $query = "INSERT INTO laporan_hasil_akhir_atribut (id_laporan_hasil_akhir, nama_atribut, nilai) VALUES ('$id_laporan_hasil_akhir', '$nama_atribut', '$nilai')";
-                        if (!mysqli_query($db, $query)) {
-                            echo "Error inserting into laporan_hasil_akhir_atribut: " . mysqli_error($db) . "<br>";
-                            exit;
-                        }
-                    }
                 } else {
-                    echo "Error: " . mysqli_error($db) . "<br>";
+                    echo "Error inserting into laporan_hasil_akhir: " . mysqli_error($db) . "<br>";
+                    return;
+                }
+            } else {
+                // Jika sudah ada, ambil ID laporan_hasil_akhir yang ada
+                $row = mysqli_fetch_assoc($result);
+                $id_laporan_hasil_akhir = $row['id'];
+            }
+
+            // Masukkan data ke tabel laporan_hasil_akhir_atribut
+            foreach ($data[$dataIndex] as $attrIndex => $value) {
+                $nama_atribut = $atribut[$attrIndex]['nama_atribut'];
+                $nilai = number_format($value);
+
+                // Cek apakah data atribut sudah ada
+                $query = "SELECT id FROM laporan_hasil_akhir_atribut WHERE id_laporan_hasil_akhir = '$id_laporan_hasil_akhir' AND nama_atribut = '$nama_atribut' AND nilai = '$nilai'";
+                $result = mysqli_query($db, $query);
+
+                if (mysqli_num_rows($result) == 0) {
+                    // Jika belum ada, masukkan data ke tabel laporan_hasil_akhir_atribut
+                    $query = "INSERT INTO laporan_hasil_akhir_atribut (id_laporan_hasil_akhir, nama_atribut, nilai) VALUES ('$id_laporan_hasil_akhir', '$nama_atribut', '$nilai')";
+                    if (!mysqli_query($db, $query)) {
+                        echo "Error inserting into laporan_hasil_akhir_atribut: " . mysqli_error($db) . "<br>";
+                        return;
+                    }
                 }
             }
         }
-
-        // echo "Data berhasil disimpan dengan ID laporan: " . $id_laporan . "<br>";
-    } else {
-        echo "Error: " . mysqli_error($db) . "<br>";
     }
 }
+
+
+
+
 
 function deleteReport($id)
 {

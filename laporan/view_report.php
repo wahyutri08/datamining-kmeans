@@ -80,7 +80,8 @@ $hasil_akhir = query("SELECT
                             <ol class="breadcrumb justify-content-end">
                                 <li class="breadcrumb-item"><a href="../dashboard">Home</a></li>
                                 <li class="breadcrumb-item">Laporan Hasil Perhitungan</li>
-                                <li class="breadcrumb-item active">Detail Laporan</li>
+                                <li class="breadcrumb-item">Detail Laporan</li>
+                                <li class="breadcrumb-item active"><?= $laporan[0]['nama']; ?></li>
                             </ol>
                         </div>
                     </div>
