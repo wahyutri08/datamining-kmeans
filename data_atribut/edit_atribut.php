@@ -6,24 +6,22 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
     exit;
 }
 
-if (isset($_GET["id_atribut"])) {
+if (isset($_GET["id_atribut"]) && is_numeric($_GET["id_atribut"])) {
     $id_atribut = $_GET["id_atribut"];
 } else {
-    header("Location: ../error.php?message=ID atribut tidak ditemukan");
-    exit;
-}
-
-if ($id_atribut === null) {
-    header("Location: ../error.php?message=ID Atribut tidak ditemukan");
+    header("HTTP/1.1 404 Not Found");
+    include("../errors/404.html");
     exit;
 }
 
 $atribut = query("SELECT * FROM atribut WHERE id_atribut = $id_atribut");
 
 if (empty($atribut)) {
-    header("Location: ../error.php?message=ID Atribut tidak valid");
+    header("HTTP/1.1 404 Not Found");
+    include("../errors/404.html");
     exit;
 }
+
 $atribut = $atribut[0];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

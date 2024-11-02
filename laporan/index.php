@@ -9,6 +9,39 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
 $id_user = $_SESSION["id"];
 $user_role = $_SESSION["role"];
 
+$jumlahDataPerHalaman = 10;
+$jumlahData = count(query("SELECT * FROM laporan"));
+$jumlahHalaman = ceil($jumlahData / $jumlahDataPerHalaman);
+
+if (isset($_GET["page"]) && is_numeric($_GET["page"]) && $_GET["page"] > 0 && $_GET["page"] <= $jumlahHalaman) {
+    $halamanAktif = (int)$_GET["page"];
+} else {
+    $halamanAktif = 1;
+}
+
+$jumlahNavigasi = 5; // Jumlah halaman navigasi yang ingin ditampilkan
+$startPage = max(1, $halamanAktif - floor($jumlahNavigasi / 2)); // Halaman awal navigasi
+$endPage = min($jumlahHalaman, $halamanAktif + floor($jumlahNavigasi / 2)); // Halaman akhir navigasi
+
+// Jika halaman awal terlalu kecil, sesuaikan halaman akhir
+if ($startPage == 1) {
+    $endPage = min($jumlahHalaman, $startPage + $jumlahNavigasi - 1);
+}
+
+// Jika halaman akhir terlalu besar, sesuaikan halaman awal
+if ($endPage == $jumlahHalaman) {
+    $startPage = max(1, $jumlahHalaman - $jumlahNavigasi + 1);
+}
+
+$startData = ($halamanAktif - 1) * $jumlahDataPerHalaman;
+// $laporan = query("SELECT * FROM laporan LIMIT $startData, $jumlahDataPerHalaman");
+if ($user_role == 'Admin') {
+    // Role Admin Melihat Semua Data
+    $reports = query("SELECT laporan.id, users.nama, users.role, laporan.tanggal_laporan FROM laporan JOIN users ON laporan.user_id = users.id LIMIT $startData, $jumlahDataPerHalaman");
+} else {
+    $reports = query("SELECT laporan.id, users.nama, users.role, laporan.tanggal_laporan FROM laporan JOIN users ON laporan.user_id = users.id WHERE users.id = '$id_user' LIMIT $startData, $jumlahDataPerHalaman");
+}
+
 ?>
 
 
@@ -73,45 +106,54 @@ $user_role = $_SESSION["role"];
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php
-                                                    if ($user_role == 'Admin') {
-                                                        // Role Admin Melihat Semua Data
-                                                        $reports = query("SELECT laporan.id, users.nama, users.role, laporan.tanggal_laporan FROM laporan JOIN users ON laporan.user_id = users.id");
-                                                    } else {
-                                                        $reports = query("SELECT laporan.id, users.nama, users.role, laporan.tanggal_laporan FROM laporan JOIN users ON laporan.user_id = users.id WHERE users.id = '$id_user'");
-                                                    }
-
-                                                    foreach ($reports as $report) :
-                                                    ?>
+                                                    <?php if ($reports): ?>
+                                                        <?php foreach ($reports as $report) : ?>
+                                                            <tr>
+                                                                <td><?= $report['id'] ?></td>
+                                                                <td><?= $report["nama"]; ?></td>
+                                                                <td>
+                                                                    <?php
+                                                                    if ($report['role'] == 'Admin') {
+                                                                        echo '<div class="label label-table label-success">' . $report['role'] . '</div>';
+                                                                    } else {
+                                                                        echo '<div class="label label-table label-info">' . $report['role'] . '</div>';
+                                                                    }
+                                                                    ?>
+                                                                </td>
+                                                                <td><span class="text-muted"><i class="fa fa-clock-o"></i> <?= $report['tanggal_laporan'] ?></span></td>
+                                                                <td>
+                                                                    <div class="dropdown">
+                                                                        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                            Action
+                                                                        </button>
+                                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                            <li><a class="dropdown-item" href="view_report.php?id=<?= $report["id"]; ?>">Lihat Detail</a></li>
+                                                                            <li><a class="dropdown-item" href="cetak.php?id=<?= $report["id"]; ?>" target="_blank">Cetak PDF</a></li>
+                                                                            <li><a class="dropdown-item tombol-hapus" href="delete_report.php?id=<?= $report["id"]; ?>">Delete</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                    <?php else: ?>
                                                         <tr>
-                                                            <td><?= $report['id'] ?></td>
-                                                            <td><?= $report["nama"]; ?></td>
-                                                            <td>
-                                                                <?php
-                                                                if ($report['role'] == 'Admin') {
-                                                                    echo '<div class="label label-table label-success">' . $report['role'] . '</div>';
-                                                                } else {
-                                                                    echo '<div class="label label-table label-info">' . $report['role'] . '</div>';
-                                                                }
-                                                                ?>
-                                                            </td>
-                                                            <td><span class="text-muted"><i class="fa fa-clock-o"></i> <?= $report['tanggal_laporan'] ?></span></td>
-                                                            <td>
-                                                                <div class="dropdown">
-                                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                        Action
-                                                                    </button>
-                                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                        <li><a class="dropdown-item" href="view_report.php?id=<?= $report["id"]; ?>">Lihat Detail</a></li>
-                                                                        <li><a class="dropdown-item" href="cetak.php?id=<?= $report["id"]; ?>" target="_blank">Cetak PDF</a></li>
-                                                                        <li><a class="dropdown-item tombol-hapus" href="delete_report.php?id=<?= $report["id"]; ?>">Delete</a></li>
-                                                                    </ul>
-                                                                </div>
-                                                            </td>
+                                                            <td class="text-center" colspan="6">No data found</td>
                                                         </tr>
-                                                    <?php endforeach; ?>
+                                                    <?php endif; ?>
                                                 </tbody>
                                             </table>
+                                            <nav aria-label="Page navigation example" id="pagination-container">
+                                                <div class="showing-entries">
+                                                    <span id="showing-entries">Showing <?= ($startData + 1); ?> to <?= min($startData + $jumlahDataPerHalaman, $jumlahData); ?> of <?= $jumlahData; ?> entries</span>
+                                                    <ul class="pagination pagination-sm m-0 justify-content-end">
+                                                        <li class="page-item"><a class="page-link" href="?page=<?= max(1, $halamanAktif - 1); ?>">Previous</a></li>
+                                                        <?php for ($i = $startPage; $i <= $endPage; $i++) : ?>
+                                                            <li class="page-item <?= $i == $halamanAktif ? 'active' : ''; ?>"><a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a></li>
+                                                        <?php endfor; ?>
+                                                        <li class="page-item"><a class="page-link" href="?page=<?= min($jumlahHalaman, $halamanAktif + 1); ?>">Next</a></li>
+                                                    </ul>
+                                                </div>
+                                            </nav>
                                         </div>
                                     </div>
                                 </div>

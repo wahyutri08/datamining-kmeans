@@ -14,18 +14,33 @@ if ($_SESSION['role'] !== 'Admin') {
 $jumlahDataPerHalaman = 10;
 $jumlahData = count(query("SELECT * FROM users"));
 $jumlahHalaman = ceil($jumlahData / $jumlahDataPerHalaman);
-$halamanAktif = (isset($_GET["page"]) && is_numeric($_GET["page"]) && $_GET["page"] > 0 && $_GET["page"] <= $jumlahHalaman) ? (int)$_GET["page"] : 1;
-$awalData = ($jumlahDataPerHalaman * $halamanAktif) - $jumlahDataPerHalaman;
 
-$users = query("SELECT * FROM users LIMIT $awalData, $jumlahDataPerHalaman");
+if (isset($_GET["page"]) && is_numeric($_GET["page"]) && $_GET["page"] > 0 && $_GET["page"] <= $jumlahHalaman) {
+    $halamanAktif = (int)$_GET["page"];
+} else {
+    $halamanAktif = 1;
+}
+
+$jumlahNavigasi = 5; // Jumlah halaman navigasi yang ingin ditampilkan
+$startPage = max(1, $halamanAktif - floor($jumlahNavigasi / 2)); // Halaman awal navigasi
+$endPage = min($jumlahHalaman, $halamanAktif + floor($jumlahNavigasi / 2)); // Halaman akhir navigasi
+
+// Jika halaman awal terlalu kecil, sesuaikan halaman akhir
+if ($startPage == 1) {
+    $endPage = min($jumlahHalaman, $startPage + $jumlahNavigasi - 1);
+}
+
+// Jika halaman akhir terlalu besar, sesuaikan halaman awal
+if ($endPage == $jumlahHalaman) {
+    $startPage = max(1, $jumlahHalaman - $jumlahNavigasi + 1);
+}
+
+$startData = ($halamanAktif - 1) * $jumlahDataPerHalaman;
+$users = query("SELECT * FROM users LIMIT $startData, $jumlahDataPerHalaman");
 if (isset($_POST["search"])) {
     $users = searchUsers($_POST["keyword"]);
 }
 
-if ($halamanAktif > $jumlahHalaman) {
-    header("Location: ../data_cluster");
-    exit();
-}
 
 ?>
 
@@ -141,59 +156,56 @@ if ($halamanAktif > $jumlahHalaman) {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php $n = 1; ?>
-                                                    <?php foreach ($users as $userData) : ?>
+                                                    <?php $n = 1 + $startData; ?>
+                                                    <?php if ($jumlahData > 0): ?>
+                                                        <?php foreach ($users as $userData) : ?>
+                                                            <tr>
+                                                                <td><?= $n; ?></td>
+                                                                <td><?= $userData["id"]; ?></td>
+                                                                <td><?= $userData["username"]; ?></td>
+                                                                <td><?= $userData["nama"]; ?></td>
+                                                                <td><?= $userData["email"]; ?></td>
+                                                                <td>
+                                                                    <?php
+                                                                    if ($userData['role'] == 'Admin') {
+                                                                        echo '<div class="label label-table label-success">' . $userData["role"] . '</div>';
+                                                                    } else {
+                                                                        echo '<div class="label label-table label-info">' . $userData["role"] . '</div>';
+                                                                    }
+                                                                    ?>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="dropdown">
+                                                                        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                            Action
+                                                                        </button>
+                                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                            <li><a class="dropdown-item" href="edit_users.php?id=<?= $userData["id"]; ?>">Edit</a></li>
+                                                                            <li><a class="dropdown-item tombol-hapus" href="delete_users.php?id=<?= $userData["id"]; ?>">Delete</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <?php $n++; ?>
+                                                        <?php endforeach; ?>
+                                                    <?php else: ?>
                                                         <tr>
-                                                            <td><?= $n; ?></td>
-                                                            <td><?= $userData["id"]; ?></td>
-                                                            <td><?= $userData["username"]; ?></td>
-                                                            <td><?= $userData["nama"]; ?></td>
-                                                            <td><?= $userData["email"]; ?></td>
-                                                            <td>
-                                                                <?php
-                                                                if ($userData['role'] == 'Admin') {
-                                                                    echo '<div class="label label-table label-success">' . $userData["role"] . '</div>';
-                                                                } else {
-                                                                    echo '<div class="label label-table label-info">' . $userData["role"] . '</div>';
-                                                                }
-                                                                ?>
-                                                            </td>
-                                                            <td>
-                                                                <div class="dropdown">
-                                                                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                        Action
-                                                                    </button>
-                                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                                        <li><a class="dropdown-item" href="edit_users.php?id=<?= $userData["id"]; ?>">Edit</a></li>
-                                                                        <li><a class="dropdown-item tombol-hapus" href="delete_users.php?id=<?= $userData["id"]; ?>">Delete</a></li>
-                                                                    </ul>
-                                                                </div>
-                                                            </td>
+                                                            <td colspan="9" class="text-center">No data found</td>
                                                         </tr>
-                                                        <?php $n++; ?>
-                                                    <?php endforeach; ?>
+                                                    <?php endif; ?>
                                                 </tbody>
                                             </table>
                                             <nav aria-label="Page navigation example" id="pagination-container">
-                                                <ul class="pagination justify-content-end">
-                                                    <li class="page-item"><a class="page-link" href="?page=<?= max(1, $halamanAktif - 1); ?>">Previous</a></li>
-                                                    <?php
-                                                    // Batasi jumlah maksimum item navigasi menjadi 5
-                                                    $jumlahTampil = min(5, $jumlahHalaman);
-                                                    // Hitung titik awal iterasi untuk tetap berada di tengah
-                                                    $start = max(1, min($halamanAktif - floor($jumlahTampil / 2), $jumlahHalaman - $jumlahTampil + 1));
-                                                    // Hitung titik akhir iterasi
-                                                    $end = min($start + $jumlahTampil - 1, $jumlahHalaman);
-
-                                                    for ($i = $start; $i <= $end; $i++) :
-                                                        if ($i == $halamanAktif) : ?>
-                                                            <li class="page-item active"><a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a></li>
-                                                        <?php else : ?>
-                                                            <li class="page-item"><a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a></li>
-                                                    <?php endif;
-                                                    endfor; ?>
-                                                    <li class="page-item"><a class="page-link" href="?page=<?= min($jumlahHalaman, $halamanAktif + 1); ?>">Next</a></li>
-                                                </ul>
+                                                <div class="showing-entries">
+                                                    <span id="showing-entries">Showing <?= ($startData + 1); ?> to <?= min($startData + $jumlahDataPerHalaman, $jumlahData); ?> of <?= $jumlahData; ?> entries</span>
+                                                    <ul class="pagination pagination-sm m-0 justify-content-end">
+                                                        <li class="page-item"><a class="page-link" href="?page=<?= max(1, $halamanAktif - 1); ?>">Previous</a></li>
+                                                        <?php for ($i = $startPage; $i <= $endPage; $i++) : ?>
+                                                            <li class="page-item <?= $i == $halamanAktif ? 'active' : ''; ?>"><a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a></li>
+                                                        <?php endfor; ?>
+                                                        <li class="page-item"><a class="page-link" href="?page=<?= min($jumlahHalaman, $halamanAktif + 1); ?>">Next</a></li>
+                                                    </ul>
+                                                </div>
                                             </nav>
                                         </div>
                                     </div>

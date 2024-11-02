@@ -24,7 +24,8 @@ $jumlahData = $resultTotal[0]['jumlah'];
 $jumlahHalaman = ceil($jumlahData / $jumlahDataPerHalaman);
 
 // Mendefinisikan tautan pagination secara langsung
-$pagination = '<ul class="pagination justify-content-end">';
+$pagination = '<span id="showing-entries">Showing ' . ($awalData + 1) . ' to ' . min($awalData + $jumlahDataPerHalaman, $jumlahData) . ' of ' . $jumlahData . ' entries</span>';
+$pagination .= '<ul class="pagination pagination-sm m-0 justify-content-end">';
 $pagination .= '<li class="page-item"><a class="page-link" href="?page=' . max(1, $page - 1) . '">Previous</a></li>';
 
 $jumlahTampil = min(5, $jumlahHalaman);
@@ -40,6 +41,7 @@ for ($i = $start; $i <= $end; $i++) {
 }
 $pagination .= '<li class="page-item"><a class="page-link" href="?page=' . min($jumlahHalaman, $page + 1) . '">Next</a></li>';
 $pagination .= '</ul>';
+$pagination .= '</div>';
 ?>
 
 <div class="table-responsive">
@@ -51,25 +53,31 @@ $pagination .= '</ul>';
                 <th></th>
             </tr>
         </thead>
-        <?php foreach ($atribut as $row) : ?>
-            <tbody>
-                <tr>
-                    <td><?= $row["id_atribut"]; ?></td>
-                    <td><?= $row["nama_atribut"]; ?></td>
-                    <td>
-                        <div class="dropdown">
-                            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                Action
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item" href="edit_atribut.php?id_atribut=<?= $row["id_atribut"]; ?>">Edit</a></li>
-                                <li><a class="dropdown-item tombol-hapus" href="delete_atribut.php?id_atribut=<?= $row["id_atribut"]; ?>">Delete</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        <?php endforeach; ?>
+        <?php if ($jumlahData > 0): ?>
+            <?php foreach ($atribut as $row) : ?>
+                <tbody>
+                    <tr>
+                        <td><?= $row["id_atribut"]; ?></td>
+                        <td><?= $row["nama_atribut"]; ?></td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Action
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" href="edit_atribut.php?id_atribut=<?= $row["id_atribut"]; ?>">Edit</a></li>
+                                    <li><a class="dropdown-item tombol-hapus" href="delete_atribut.php?id_atribut=<?= $row["id_atribut"]; ?>">Delete</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="9" class="text-center">No data found</td>
+            </tr>
+        <?php endif; ?>
     </table>
 </div>
 <!-- Tampilkan pagination -->

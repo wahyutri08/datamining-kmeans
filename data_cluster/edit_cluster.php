@@ -6,8 +6,23 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
     exit;
 }
 
-$id_cluster = $_GET["id_cluster"];
-$cluster = query("SELECT * FROM cluster WHERE id_cluster = $id_cluster")[0];
+if (isset($_GET["id_cluster"]) && is_numeric($_GET["id_cluster"])) {
+    $id_cluster = $_GET["id_cluster"];
+} else {
+    header("HTTP/1.1 404 Not Found");
+    include("../errors/404.html");
+    exit;
+}
+
+$cluster = query("SELECT * FROM cluster WHERE id_cluster = $id_cluster");
+
+if (empty($cluster)) {
+    header("HTTP/1.1 404 Not Found");
+    include("../errors/404.html");
+    exit;
+}
+
+$cluster = $cluster[0];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = editCluster($_POST);

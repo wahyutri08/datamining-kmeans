@@ -26,7 +26,8 @@ $jumlahData = $resultTotal[0]['jumlah'];
 $jumlahHalaman = ceil($jumlahData / $jumlahDataPerHalaman);
 
 // Mendefinisikan tautan pagination secara langsung
-$pagination = '<ul class="pagination justify-content-end">';
+$pagination = '<span id="showing-entries">Showing ' . ($awalData + 1) . ' to ' . min($awalData + $jumlahDataPerHalaman, $jumlahData) . ' of ' . $jumlahData . ' entries</span>';
+$pagination .= '<ul class="pagination pagination-sm m-0 justify-content-end">';
 $pagination .= '<li class="page-item"><a class="page-link" href="?page=' . max(1, $page - 1) . '">Previous</a></li>';
 
 $jumlahTampil = min(5, $jumlahHalaman);
@@ -40,9 +41,9 @@ for ($i = $start; $i <= $end; $i++) {
         $pagination .= '<li class="page-item"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
     }
 }
-
 $pagination .= '<li class="page-item"><a class="page-link" href="?page=' . min($jumlahHalaman, $page + 1) . '">Next</a></li>';
 $pagination .= '</ul>';
+$pagination .= '</div>';
 
 ?>
 
@@ -59,44 +60,50 @@ $pagination .= '</ul>';
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($kelurahan as $rows) : ?>
-                <tr>
-                    <td><?= $rows["id_kelurahan"]; ?></td>
-                    <td><?= $rows["nama_kelurahan"]; ?></td>
-                    <?php foreach ($atribut as $row) : ?>
-                        <td>
-                            <?php
-                            $nilaikelurahan = query("SELECT * FROM nilai_kelurahan WHERE id_kelurahan = " . $rows['id_kelurahan'] . " AND id_atribut = " . $row['id_atribut']);
-                            if ($nilaikelurahan) {
-                                echo $nilaikelurahan[0]['nilai'];
-                            } else {
-                                echo " ";
-                            }
-                            ?>
-                        </td>
-                    <?php endforeach; ?>
-                    <td>
-                        <div class="dropdown">
-                            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                Action
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item" href="editnilai.php?id_kelurahan=<?= $rows["id_kelurahan"]; ?>" onclick="edit(<?= $rows['id_kelurahan'] ?>)">Edit</a></li>
+            <?php if ($jumlahData > 0): ?>
+                <?php foreach ($kelurahan as $rows) : ?>
+                    <tr>
+                        <td><?= $rows["id_kelurahan"]; ?></td>
+                        <td><?= $rows["nama_kelurahan"]; ?></td>
+                        <?php foreach ($atribut as $row) : ?>
+                            <td>
                                 <?php
-                                // Pastikan $nilaikelurahan dan $rows terdefinisi dan memiliki nilai sebelum digunakan
-                                if (isset($nilaikelurahan[0]['nilai']) && isset($rows["id_kelurahan"])) {
-                                    if ($nilaikelurahan[0]['nilai'] !== null && $nilaikelurahan[0]['nilai'] !== "") {
-                                        echo '<li><a class="dropdown-item tombol-hapus" href="deletenilai.php?id_kelurahan=' . $rows["id_kelurahan"] . '">Delete</a></li>';
-                                    } else {
-                                        echo "";
-                                    }
+                                $nilaikelurahan = query("SELECT * FROM nilai_kelurahan WHERE id_kelurahan = " . $rows['id_kelurahan'] . " AND id_atribut = " . $row['id_atribut']);
+                                if ($nilaikelurahan) {
+                                    echo $nilaikelurahan[0]['nilai'];
+                                } else {
+                                    echo " ";
                                 }
                                 ?>
-                            </ul>
-                        </div>
-                    </td>
+                            </td>
+                        <?php endforeach; ?>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Action
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" href="editnilai.php?id_kelurahan=<?= $rows["id_kelurahan"]; ?>" onclick="edit(<?= $rows['id_kelurahan'] ?>)">Edit</a></li>
+                                    <?php
+                                    // Pastikan $nilaikelurahan dan $rows terdefinisi dan memiliki nilai sebelum digunakan
+                                    if (isset($nilaikelurahan[0]['nilai']) && isset($rows["id_kelurahan"])) {
+                                        if ($nilaikelurahan[0]['nilai'] !== null && $nilaikelurahan[0]['nilai'] !== "") {
+                                            echo '<li><a class="dropdown-item tombol-hapus" href="deletenilai.php?id_kelurahan=' . $rows["id_kelurahan"] . '">Delete</a></li>';
+                                        } else {
+                                            echo "";
+                                        }
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="9" class="text-center">No data found</td>
                 </tr>
-            <?php endforeach; ?>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>

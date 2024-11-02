@@ -6,13 +6,12 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
     exit;
 }
 
-if (isset($_GET['id'])) {
-    $id_laporan = intval($_GET['id']);
-    if ($id_laporan <= 0) {
-        $id_laporan = 0;
-    }
+if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
+    $id_laporan = $_GET["id"];
 } else {
-    $id_laporan = 0;
+    header("HTTP/1.1 404 Not Found");
+    include("../errors/404.html");
+    exit;
 }
 
 // Ambil Data Lpaoran
@@ -26,7 +25,9 @@ $laporan = query("SELECT
                 JOIN users 
                 ON laporan.user_id = users.id WHERE laporan.id = $id_laporan");
 if (empty($laporan)) {
-    die("Laporan tidak ditemukan.");
+    header("HTTP/1.1 404 Not Found");
+    include("../errors/404.html");
+    exit;
 }
 
 $hasil_akhir = query("SELECT 

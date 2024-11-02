@@ -6,8 +6,21 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
     exit;
 }
 
-$id_kelurahan = $_GET["id_kelurahan"];
-$kelurahan = query("SELECT * FROM kelurahan WHERE id_kelurahan = $id_kelurahan")[0];
+if (isset($_GET["id_kelurahan"]) && is_numeric($_GET["id_kelurahan"])) {
+    $id_kelurahan = $_GET["id_kelurahan"];
+} else {
+    header("HTTP/1.1 404 Not Found");
+    include("../errors/404.html");
+    exit;
+}
+$kelurahan = query("SELECT * FROM kelurahan WHERE id_kelurahan = $id_kelurahan");
+if (empty($kelurahan)) {
+    header("HTTP/1.1 404 Not Found");
+    include("../errors/404.html");
+    exit;
+}
+$kelurahan = $kelurahan[0];
+
 $atribut = query("SELECT * FROM atribut");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

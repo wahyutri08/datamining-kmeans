@@ -6,7 +6,13 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
     exit;
 }
 
-$id_cluster = $_GET["id_cluster"];
+if (isset($_GET["id_cluster"]) && is_numeric($_GET["id_cluster"])) {
+    $id_cluster = $_GET["id_cluster"];
+} else {
+    header("HTTP/1.1 404 Not Found");
+    include("../errors/404.html");
+    exit;
+}
 
 if (deletenilaiCluster($id_cluster) > 0) {
     echo json_encode(['status' => 'success']);
