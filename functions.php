@@ -818,11 +818,6 @@ function simpanhasilakhir($centroids, $clusters, $history, $id_user, $dateReport
     return 1; // Seluruh proses berhasil
 }
 
-
-
-
-
-
 function deleteReport($id)
 {
     global $db;

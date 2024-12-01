@@ -123,4 +123,4 @@ $html .= '</tbody>
 
 // Generate PDF
 $mpdf->WriteHTML($html);
-$mpdf->Output('laporan_hasil_akhir_perhitungan.pdf', 'I');
+$mpdf->Output('laporan_hasil_akhir_perhitungan.pdf', 'D');

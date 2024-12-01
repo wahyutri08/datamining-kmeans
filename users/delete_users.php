@@ -10,7 +10,13 @@ if ($_SESSION['role'] !== 'Admin') {
     exit;
 }
 
-$id = $_GET["id"];
+if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
+    $id = $_GET["id"];
+} else {
+    header("HTTP/1.1 404 Not Found");
+    include("../errors/404.html");
+    exit;
+}
 
 if (deleteUsers($id) > 0) {
     echo json_encode(['status' => 'success']);

@@ -11,8 +11,20 @@ if ($_SESSION['role'] !== 'Admin') {
     exit;
 }
 
-$id = $_GET["id"];
-$users = query("SELECT * FROM users WHERE id = $id")[0];
+if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
+    $id = $_GET["id"];
+} else {
+    header("HTTP/1.1 404 Not Found");
+    include("../errors/404.html");
+    exit;
+}
+$users = query("SELECT * FROM users WHERE id = $id");
+if (empty($users)) {
+    header("HTTP/1.1 404 Not Found");
+    include("../errors/404.html");
+    exit;
+}
+$users = $users[0];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Ambil nilai yang dikirimkan untuk username baru
