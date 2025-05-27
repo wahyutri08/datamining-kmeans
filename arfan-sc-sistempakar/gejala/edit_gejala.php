@@ -15,7 +15,7 @@ if (isset($_GET["id_gejala"]) && is_numeric($_GET["id_gejala"])) {
     exit;
 }
 
-$gejala = query("SELECT * FROM gejala");
+$gejala = query("SELECT * FROM gejala WHERE id_gejala = $id_gejala");
 
 if (empty($gejala)) {
     header("HTTP/1.1 404 Not Found");
