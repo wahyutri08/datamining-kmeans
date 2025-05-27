@@ -6,39 +6,30 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
     exit;
 }
 
-$user_id = $_SESSION['id'];
-$role = $_SESSION['role'];
 
-
-if (isset($_GET["id_pasien"]) && is_numeric($_GET["id_pasien"])) {
-    $id_pasien = $_GET["id_pasien"];
+if (isset($_GET["id_gejala"]) && is_numeric($_GET["id_gejala"])) {
+    $id_gejala = $_GET["id_gejala"];
 } else {
     header("HTTP/1.1 404 Not Found");
     include("../error/error-404.html");
     exit;
 }
 
+$gejala = query("SELECT * FROM gejala");
 
-if ($role == 'Admin') {
-    $pasien = query("SELECT * FROM pasien WHERE id_pasien = $id_pasien");
-} else {
-    $pasien = query("SELECT * FROM pasien WHERE id_pasien = $id_pasien AND user_id = $user_id");
-}
-
-
-if (empty($pasien)) {
+if (empty($gejala)) {
     header("HTTP/1.1 404 Not Found");
     include("../error/error-404.html");
     exit;
 }
-$pasien = $pasien[0];
+$gejala = $gejala[0];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $result = editPasien($_POST);
+    $result = editGejala($_POST);
     if ($result > 0) {
         echo json_encode(["status" => "success", "message" => "Data Successfully Updated"]);
     } elseif ($result == -1) {
-        echo json_encode(["status" => "error", "message" => "NIK Already Existed"]);
+        echo json_encode(["status" => "error", "message" => "Kode Gejala Already Existed"]);
     } else {
         echo json_encode(["status" => "error", "message" => "Data Failed to Update"]);
     }
@@ -52,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit - <?= $pasien["nama_pasien"]; ?></title>
+    <title>Edit - <?= $gejala["kode_gejala"]; ?></title>
 
 
 
@@ -84,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="page-title mb-3">
                     <div class="row">
                         <div class="col-12 col-md-6 order-md-1 order-last">
-                            <h3>Edit Data Pasien</h3>
+                            <h3>Edit Gejala</h3>
                         </div>
                         <div class="col-12 col-md-6 order-md-2 order-first">
                             <nav
@@ -95,9 +86,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <li class="breadcrumb-item" aria-current="page">
                                         Master Data
                                     </li>
-                                    <li class="breadcrumb-item" aria-current="page">Data Pasien</li>
+                                    <li class="breadcrumb-item" aria-current="page">Gejala</li>
                                     <li class="breadcrumb-item" aria-current="page">Edit</li>
-                                    <li class="breadcrumb-item active" aria-current="page"><?= $pasien["nama_pasien"]; ?></li>
+                                    <li class="breadcrumb-item active" aria-current="page"><?= $gejala["kode_gejala"]; ?></li>
                                 </ol>
                             </nav>
                         </div>
@@ -105,109 +96,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <!-- // Basic multiple Column Form section start -->
-                <section id="multiple-column-form">
+                <section id="basic-horizontal-layouts">
                     <div class="row match-height">
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">DATA PASIEN</h4>
+                                    <h4 class="card-title">DATA GEJALA</h4>
                                 </div>
                                 <div class="card-content">
                                     <div class="card-body">
-                                        <form method="POST" action="" enctype="multipart/form-data" class="form" data-parsley-validate id="myForm">
-                                            <input type="hidden" name="id_pasien" value="<?= $pasien["id_pasien"]; ?>">
-                                            <div class="row">
-                                                <div class="col-md-6 col-12">
-                                                    <div class="form-group mandatory">
-                                                        <label for="nama_pasien" class="form-label">Nama Pasien</label>
-                                                        <input
-                                                            type="text"
-                                                            id="nama_pasien"
-                                                            class="form-control"
-                                                            placeholder="nama_pasien"
-                                                            name="nama_pasien"
-                                                            value="<?= $pasien["nama_pasien"]; ?>"
-                                                            data-parsley-required="true" />
+                                        <form method="POST" action="" enctype="multipart/form-data" class="form form-horizontal" data-parsley-validate id="myForm">
+                                            <input type="hidden" name="id_gejala" value="<?= $gejala["id_gejala"]; ?>">
+                                            <div class="form-body">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label for="kode_gejala" class="form-label">Kode Gejala <span class="text-danger">*</span></label>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-6 col-12">
-                                                    <div class="form-group mandatory">
-                                                        <label for="nik" class="form-label">Nomor Induk Kependudukan</label>
-                                                        <input
-                                                            type="number"
-                                                            id="nik"
-                                                            class="form-control"
-                                                            placeholder="NIK"
-                                                            name="nik"
-                                                            value="<?= $pasien["nik"]; ?>"
-                                                            data-parsley-required="true" />
+                                                    <div class="col-md-8 form-group mandatory">
+                                                        <input type="text" id="kode_gejala" class="form-control" name="kode_gejala"
+                                                            placeholder="Kode Gejala" value="<?= $gejala["kode_gejala"]; ?>" data-parsley-required="true" />
                                                     </div>
-                                                </div>
-                                                <div class="col-md-6 col-12">
-                                                    <fieldset class="form-group mandatory">
-                                                        <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-                                                        <select class="form-select" id="jenis_kelamin" name="jenis_kelamin" required>
-                                                            <option value="" disabled selected>Choose..</option>
-                                                            <option value="Laki-laki" <?= ($pasien["jenis_kelamin"] == "Laki-laki") ? "selected" : "" ?>>Laki-laki</option>
-                                                            <option value="Perempuan" <?= ($pasien["jenis_kelamin"] == "Perempuan") ? "selected" : "" ?>>Perempuan</option>
-                                                        </select>
-                                                    </fieldset>
-                                                </div>
-                                                <div class="col-md-6 col-12">
-                                                    <div class="form-group mandatory">
-                                                        <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
-                                                        <input
-                                                            type="date"
-                                                            id="tanggal_lahir"
-                                                            class="form-control"
-                                                            name="tanggal_lahir"
-                                                            value="<?= $pasien["tanggal_lahir"]; ?>"
-                                                            placeholder="Tanggal Lahir"
-                                                            data-parsley-required="true" />
+                                                    <div class="col-md-4">
+                                                        <label for="nama_gejala">Nama Gejala <span class="text-danger">*</span></label>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-6 col-12">
-                                                    <div class="form-group mandatory">
-                                                        <label for="usia" class="form-label">Usia</label>
-                                                        <input
-                                                            type="number"
-                                                            id="usia"
-                                                            class="form-control"
-                                                            name="usia"
-                                                            placeholder="Usia"
-                                                            value="<?= $pasien["usia"]; ?>"
-                                                            data-parsley-required="true" />
+                                                    <div class="col-md-8 form-group">
+                                                        <input type="text" id="nama_gejala" class="form-control" name="nama_gejala"
+                                                            placeholder="Nama Gejala" value="<?= $gejala["nama_gejala"]; ?>" data-parsley-required="true" />
                                                     </div>
-                                                </div>
-                                                <div class="col-md-6 col-12">
-                                                    <div class="form-group mandatory">
-                                                        <label for="no_hp" class="form-label">No Telepon</label>
-                                                        <input
-                                                            type="text"
-                                                            id="no_hp"
-                                                            class="form-control"
-                                                            name="no_hp"
-                                                            placeholder="No Telepon"
-                                                            value="<?= $pasien["no_hp"]; ?>" />
+                                                    <div class="col-sm-12 d-flex justify-content-end mt-3">
+                                                        <button type="submit" class="btn btn-primary me-1 mb-1">Save Change</button>
+                                                        <button type="reset"
+                                                            class="btn btn-light-secondary me-1 mb-1">Reset</button>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-6 col-12">
-                                                    <div class="form-group mandatory">
-                                                        <label for="alamat" class="form-label">Alamat</label>
-                                                        <textarea class="form-control" id="alamat" name="alamat" rows="3" required><?= $pasien["alamat"]; ?></textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12 d-flex justify-content-end">
-                                                    <button type="submit" class="btn btn-primary me-1 mb-1">
-                                                        Save Change
-                                                    </button>
-                                                    <button
-                                                        type="reset"
-                                                        class="btn btn-light-secondary me-1 mb-1">
-                                                        Reset
-                                                    </button>
                                                 </div>
                                             </div>
                                         </form>
@@ -258,7 +178,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 text: res.message,
                                 icon: "success"
                             }).then(() => {
-                                window.location.href = '../data_pasien';
+                                window.location.href = '../gejala';
                             });
                         } else {
                             Swal2.fire('Error', res.message, 'error');

@@ -3,7 +3,7 @@
 $current_page = basename($_SERVER['REQUEST_URI']);
 
 // Halaman-halaman yang berada di dalam Master Data
-$master_data_pages = ['data_pasien', 'data_variabel', 'rule_fuzzy'];
+$master_data_pages = ['data_pasien', 'gejala', 'rule_fuzzy'];
 $keputusan = ['keputusan'];
 $settings_page = ['profile', 'change_password'];
 
@@ -71,6 +71,9 @@ $user = query("SELECT * FROM users WHERE id = $id")[0];
                     <ul class="submenu">
                         <li class="submenu-item <?= ($current_page == 'data_pasien' ? 'active' : '') ?> ">
                             <a href="../data_pasien" class="submenu-link">Data Pasien</a>
+                        </li>
+                        <li class="submenu-item <?= ($current_page == 'gejala' ? 'active' : '') ?> ">
+                            <a href="../gejala" class="submenu-link">Gejala</a>
                         </li>
                         <?php
                         if ($user['role'] == 'Admin') {

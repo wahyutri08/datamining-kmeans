@@ -9,7 +9,7 @@ if (!isset($_SESSION["login"]) || $_SESSION["login"] !== true) {
 
 $id_pasien = $_GET["id_pasien"];
 
-if (deleteSiswa($id_pasien) > 0) {
+if (deletePasien($id_pasien) > 0) {
     echo json_encode(['status' => 'success']);
 } else {
     echo json_encode(['status' => 'error']);

@@ -132,7 +132,7 @@ function addPasien($data)
     $user_id = $_SESSION['id'];
 
     $nama_pasien = ucfirst(stripcslashes($data["nama_pasien"]));
-    $nik = htmlspecialchars($data["nik"]);
+    $nik = mysqli_real_escape_string($db, $data["nik"]);
     $jenis_kelamin = htmlspecialchars($data["jenis_kelamin"]);
     $tanggal_lahir = htmlspecialchars($data["tanggal_lahir"]);
     $usia = htmlspecialchars($data["usia"]);
@@ -159,15 +159,99 @@ function addPasien($data)
     }
 }
 
-function editPasien($data) {}
+function editPasien($data)
+{
+    global $db;
+    $id_pasien = $data["id_pasien"];
+    $nama_pasien = ucfirst(stripcslashes($data["nama_pasien"]));
+    $nik = mysqli_real_escape_string($db, $data["nik"]);
+    $jenis_kelamin = htmlspecialchars($data["jenis_kelamin"]);
+    $tanggal_lahir = htmlspecialchars($data["tanggal_lahir"]);
+    $usia = htmlspecialchars($data["usia"]);
+    $alamat = htmlspecialchars($data["alamat"]);
+    $no_hp = htmlspecialchars($data["no_hp"]);
 
-function deleteSiswa($id_pasien)
+    // Periksa apakah nik pasien sudah ada, tetapi abaikan baris yang sedang diedit
+    $query = "SELECT * FROM pasien WHERE nik = '$nik' AND id_pasien != $id_pasien";
+    $result = mysqli_query($db, $query);
+
+    if (mysqli_fetch_assoc($result)) {
+        return -1;
+    }
+
+    $updatedAt = date('Y-m-d H:i:s');
+    // Jika nis siswa tidak ada yang duplikat, lakukan update
+    $query = "UPDATE pasien SET nama_pasien = '$nama_pasien', 
+                     nik = '$nik',
+                     jenis_kelamin = '$jenis_kelamin',
+                     tanggal_lahir = '$tanggal_lahir',
+                     tanggal_lahir = '$tanggal_lahir',
+                     usia = '$usia',
+                     alamat = '$alamat',
+                     no_hp = '$no_hp',
+                     updated_at = '$updatedAt'
+                      WHERE id_pasien = $id_pasien";
+    mysqli_query($db, $query);
+
+    return mysqli_affected_rows($db);
+}
+
+function deletePasien($id_pasien)
 {
     global $db;
     mysqli_query($db, "DELETE FROM pasien WHERE id_pasien = $id_pasien");
     return mysqli_affected_rows($db);
 }
 
+function addGejala($data)
+{
+    global $db;
+
+    $kode_gejala = mysqli_real_escape_string($db, $data["kode_gejala"]);
+    $nama_gejala = htmlspecialchars($data["nama_gejala"]);
+
+    // Periksa apakah Kode Gejala sudah ada di database
+    $query = "SELECT * FROM gejala WHERE kode_gejala = '$kode_gejala'";
+    $result = mysqli_query($db, $query);
+    if (mysqli_fetch_assoc($result)) {
+        // Jika Kode Gejala sudah ada, return -1
+        return -1;
+    }
+
+    $query = "INSERT INTO gejala 
+        (kode_gejala, nama_gejala)
+        VALUES 
+        ('$kode_gejala', '$nama_gejala')";
+
+    mysqli_query($db, $query);
+    return mysqli_affected_rows($db);
+}
+
+function editGejala($data)
+{
+    global $db;
+    $id_gejala = $data["id_gejala"];
+    $kode_gejala = mysqli_real_escape_string($db, $data["kode_gejala"]);
+    $nama_gejala = htmlspecialchars($data["nama_gejala"]);
+
+    // Periksa apakah nik pasien sudah ada, tetapi abaikan baris yang sedang diedit
+    $query = "SELECT * FROM gejala WHERE kode_gejala = '$kode_gejala' AND id_gejala != $id_gejala";
+    $result = mysqli_query($db, $query);
+
+    if (mysqli_fetch_assoc($result)) {
+        return -1;
+    }
+
+    $updatedAt = date('Y-m-d H:i:s');
+    // Jika nis siswa tidak ada yang duplikat, lakukan update
+    $query = "UPDATE gejala SET kode_gejala = '$kode_gejala', 
+                     nama_gejala = '$nama_gejala',
+                     updated_at = '$updatedAt'
+                      WHERE id_gejala = $id_gejala";
+    mysqli_query($db, $query);
+
+    return mysqli_affected_rows($db);
+}
 
 function upload()
 {
